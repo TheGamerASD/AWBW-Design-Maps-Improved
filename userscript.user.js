@@ -1155,13 +1155,13 @@
         var innerSymm = Object.values(document.getElementsByClassName("norm")).filter(n => n.textContent.includes("Symm:"))[0];
 
         var badge = document.createElement("b");
-        badge.setAttribute("style", "width: 20px; line-height: 20px; border-radius: 50%; color: #fff; text-align: center; background: red; display: none; aspect-ratio: 1/1; padding-left: 0px; margin-left: 1px; vertical-align: middle;");
+        badge.setAttribute("style", "width: 20px; line-height: 20px; border-radius: 50%; color: #fff; text-align: center; background: red; display: none; aspect-ratio: 1/1; padding-left: 0px; margin-left: 1px; vertical-align: middle; cursor: default;");
         badge.setAttribute("id", "symm-badge");
         badge.setAttribute("title", "");
         innerSymm.appendChild(badge);
 
         var check = document.createElement("b");
-        check.setAttribute("style", "color: green; font-size: 17px; vertical-align: middle; padding-right: 1px; display: none;");
+        check.setAttribute("style", "color: green; font-size: 17px; vertical-align: middle; padding-right: 1px; display: none; cursor: default;");
         check.setAttribute("id", "symm-check");
         check.setAttribute("title", "Map is symmetrical");
         check.textContent = "✓";
