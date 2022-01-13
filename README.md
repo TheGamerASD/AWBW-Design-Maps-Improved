@@ -11,3 +11,8 @@ This is a Tampermonkey user script for improving the Advance Wars By Web mapmaki
 * Fixed Tile Clicks
 * Asymmetry Detector
 * Improved Create Map Form
+## Browser Compatability:
+* Microsoft Edge 79+
+* Chrome 62+
+* Firefox 78+
+* Opera 49+
