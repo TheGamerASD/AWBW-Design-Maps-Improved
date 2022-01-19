@@ -1,0 +1,15 @@
+name: Automatic Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Project
+        run: tsc -p tsproject.json --outfile userscript.user.js
