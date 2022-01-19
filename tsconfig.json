@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es2018",
+            "dom"
+        ],
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true
+    },
+    "files": [
+        "userscript.ts",
+        "types.d.ts"
+    ]
+}
