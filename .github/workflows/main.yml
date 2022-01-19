@@ -10,6 +10,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Install Type Definitions
+        run: npm i --save-dev @types/jquery
 
       - name: Build Project
         run: tsc -p tsconfig.json --outfile userscript.user.js
