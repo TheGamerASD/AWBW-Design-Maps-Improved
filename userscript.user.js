@@ -522,6 +522,7 @@
             }).then(function (html) {
                 html.text().then(function (text) {
                     document.body.innerHTML = text;
+                    setTimeout(function () { return window.location.href = "https://awbw.amarriner.com/design.php"; }, 1500);
                 });
             });
         }
