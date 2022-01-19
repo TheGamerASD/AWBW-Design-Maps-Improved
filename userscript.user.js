@@ -5,15 +5,13 @@
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/editmap.php?maps_id=*
 // @match        https://awbw.amarriner.com/design.php*
+// @match        https://awbw.amarriner.com/uploadmap.php*
 // @icon         https://cdn.discordapp.com/emojis/929147036677324800.webp?size=96&quality=lossless
 // @grant        none
 // ==/UserScript==
 (function () {
     'use strict';
-    // GLOBAL VARIABLES START
     var theme;
-    // GLOBAL VARIABLES END
-    // AUTOSAVE START
     function autosaveScript() {
         'use strict';
         var intervalID;
@@ -57,8 +55,6 @@
         setInterval(autosaveCheckboxToggled, 200);
         window.onbeforeunload = onLeavePage;
     }
-    // AUTOSAVE END
-    // INFO PANEL START
     function infoPanelScript() {
         'use strict';
         var gmCont = document.getElementById("gamemap-container");
@@ -96,8 +92,6 @@
         }
         setInterval(updateInfo, 500);
     }
-    // INFO PANEL END
-    // ASYNC SAVE START
     function asyncSaveScript() {
         var saveButton = Object.values(document.getElementsByClassName("norm2")).filter(function (e) { return e.textContent.includes("Save"); })[0];
         var saveButtonText = Object.values(document.getElementsByTagName("B")).filter(function (b) { return b.textContent === "Save"; })[0];
@@ -128,14 +122,10 @@
         saveButton.setAttribute("href", "#");
         saveButton.onclick = saveAsync;
     }
-    // ASYNC SAVE END
-    // UNIT SELECT START
     function unitSelectScript() {
         var innerUnitTable = document.getElementById("design-map-unit-table").childNodes[1].childNodes[1].childNodes[2].childNodes[0];
         innerUnitTable.innerHTML = "<b style=\"padding-left: 2px;\">Land</b>\n<table>\n    <tbody>\n        <tr>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(0, 'infantry.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"infantry.gif\" src=\"https://awbw.amarriner.com/terrain/".concat(theme, "/osinfantry.gif\"\n                        style=\"display: block; margin: auto;\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(1, 'mech.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"mech.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osmech.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(2, 'recon.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"recon.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osrecon.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(6, 'tank.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"tank.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/ostank.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(4, 'apc.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"apc.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osapc.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(8, 'anti-air.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"anti-air.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osanti-air.gif\" border=\"0\"></a>\n            </td>\n        </tr>\n        <tr>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(5, 'artillery.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"artillery.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osartillery.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(12, 'rocket.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"rocket.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osrocket.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(10, 'missile.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"missile.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osmissile.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(13, 'md.tank.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"md.tank.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osmd.tank.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(18, 'neotank.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"neotank.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osneotank.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(23, 'megatank.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"megatank.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osmegatank.gif\" border=\"0\"></a>\n            </td>\n        </tr>\n        <tr>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(16, 'piperunner.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"piperunner.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/ospiperunner.gif\" border=\"0\"></a>\n            </td>\n        </tr>\n    </tbody>\n</table>\n<b style=\"padding-left: 2px;\">Air</b>\n<table>\n    <tbody>\n        <tr>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(3, 't-copter.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"t-copter.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/ost-copter.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(9, 'b-copter.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"b-copter.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osb-copter.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(15, 'fighter.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"fighter.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osfighter.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(19, 'bomber.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"bomber.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osbomber.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(20, 'stealth.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"stealth.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osstealth.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(21, 'blackbomb.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"blackbomb.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osblackbomb.gif\" border=\"0\"></a>\n            </td>\n        </tr>\n    </tbody>\n</table>\n<b style=\"padding-left: 1px;\">Naval</b>\n<table>\n    <tbody>\n        <tr>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(7, 'blackboat.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"blackboat.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osblackboat.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(11, 'lander.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"lander.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/oslander.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(14, 'cruiser.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"cruiser.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/oscruiser.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(17, 'sub.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"sub.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/ossub.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(22, 'battleship.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"battleship.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/osbattleship.gif\" border=\"0\"></a>\n            </td>\n            <td class=\"bordergrey\" style=\"vertical-align: middle;\">\n                <a href=\"javascript: changeSquare(24, 'carrier.gif' , 'unit' ); closeMenu(unitTable);\">\n                    <img id=\"carrier.gif\" style=\"display: block; margin: auto;\"\n                        src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/oscarrier.gif\" border=\"0\"></a>\n            </td>\n        </tr>\n    </tbody>\n</table>\n<b style=\"padding-left: 2px;\">Country</b>\n<table>\n    <tbody>\n        <tr>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/oslogo.gif\"\n                    onclick=\"changeCountry('os', 'orangestar' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/bmlogo.gif\" onclick=\"changeCountry('bm', 'bluemoon'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/gelogo.gif\"\n                    onclick=\"changeCountry('ge', 'greenearth' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/yclogo.gif\"\n                    onclick=\"changeCountry('yc', 'yellowcomet' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/bhlogo.gif\" onclick=\"changeCountry('bh', 'blackhole'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/rflogo.gif\" onclick=\"changeCountry('rf', 'redfire'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/gslogo.gif\" onclick=\"changeCountry('gs', 'greysky'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/bdlogo.gif\"\n                    onclick=\"changeCountry('bd', 'browndesert' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n        </tr>\n        <tr>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/ablogo.gif\"\n                    onclick=\"changeCountry('ab', 'amberblaze' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/jslogo.gif\" onclick=\"changeCountry('js', 'jadesun'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/cilogo.gif\" onclick=\"changeCountry('ci', 'cobaltice'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/pclogo.gif\"\n                    onclick=\"changeCountry('pc', 'pinkcosmos' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/tglogo.gif\"\n                    onclick=\"changeCountry('tg', 'tealgalaxy' );\" style=\"vertical-align: middle; margin-left: 0px;\n                    margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/pllogo.gif\"\n                    onclick=\"changeCountry('pl', 'purplelightning' );\" style=\"vertical-align: middle; margin-left:\n                    0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/arlogo.gif\" onclick=\"changeCountry('ar', 'acidrain'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n            <td>\n                <img src=\"https://awbw.amarriner.com/terrain/").concat(theme, "/wnlogo.gif\" onclick=\"changeCountry('wn', 'whitenova'\n                    );\" style=\"vertical-align: middle; margin-left: 0px; margin-right: 0px;cursor: pointer;\">\n            </td>\n        </tr>\n    </tbody>\n</table>");
     }
-    // UNIT SELECT END
-    // TERRAIN SELECT START
     function terrainSelectScript() {
         var tableElement = document.getElementById("design-map-building-table").childNodes[1].childNodes[1].childNodes[2].childNodes[0].childNodes[0].childNodes[1].childNodes[2].childNodes[0];
         tableElement.setAttribute("class", "bordergrey");
@@ -194,14 +184,10 @@
         countryDisplay.setAttribute("style", "display: none;");
         containerTable.style.width = "175";
     }
-    // TERRAIN SELECT END
-    // CREATE MAP START
     function createMapScript() {
         var innerCreateMapTable = Object.values(document.querySelectorAll("form")).filter(function (f) { return f.name === "" && f.action === "https://awbw.amarriner.com/design.php" && f.className !== "login-form"; })[0].parentElement;
         innerCreateMapTable.innerHTML = "<form name=\"\" create1=\"\" action=\"design.php\" method=\"post\">\n    <table cellspacing=\"1\" cellpadding=\"2\">\n        <tbody>\n            <tr>\n                <td>Map Name:</td>\n                <td><input type=\"text\" class=\"text\" name=\"maps_name\" maxlength=\"100\" style=\"padding-left: 3px;\"></td>\n            </tr>\n            <tr>\n                <td style=\"text-align: right;\">Width:</td>\n                <td>\n                    <input class=\"text\" name=\"maps_width\" min=\"5\" max=\"36\" value=\"20\" type=\"number\" style=\"width: 32%; padding-left: 3px;\">\n                </td>\n            </tr>\n            <tr>\n                <td style=\"text-align: right;\">Height:</td>\n                <td>\n                    <input class=\"text\" name=\"maps_height\" min=\"5\" max=\"36\" value=\"20\" type=\"number\" style=\"width: 32%; padding-left: 3px;\">\n                </td>\n            </tr>\n            <tr>\n                <td></td>\n                <td><input type=\"submit\" class=\"submit\" value=\"Submit\"></td>\n            </tr>\n        </tbody>\n    </table>\n    <input type=\"hidden\" name=\"maps_new\" value=\"1\">\n</form>";
     }
-    // CREATE MAP END
-    // CLICKTHROUGH START
     function clickThroughScript() {
         for (var b = 0; b <= mapheight; b++) {
             for (var a = 0; a <= mapwidth; a++) {
@@ -315,8 +301,6 @@
         }
         fixBorder();
     }
-    // CLICKTHROUGH END
-    // SYMMETRY CHECKER START
     function symmetryCheckerScript() {
         var mapObj = [];
         var innerSymm = Object.values(document.getElementsByClassName("norm")).filter(function (n) { return n.textContent.includes("Symm:"); })[0];
@@ -516,8 +500,30 @@
         }
         setInterval(checkLoop, 2000);
     }
-    // SYMMETRY CHECKER END
-    // EDITMAP.PHP START
+    function uploadMapScript() {
+        var trow = document.createElement("tr");
+        trow.innerHTML = "<td style=\"vertical-align: top;\">\nMap Data:\n</td>\n<td>\n<textarea style=\"width: 80%; height: 400px;\"></textarea>\n</td>";
+        var textArea = trow.querySelector("textarea");
+        var mapName = document.getElementsByName("name")[0];
+        var overwriteMap = document.getElementsByName("overwrite")[0];
+        var tbody = document.getElementsByClassName("borderwhite")[0].children[0].children[0];
+        tbody.insertBefore(trow, tbody.lastElementChild);
+        tbody.deleteRow(2);
+        tbody.deleteRow(0);
+        var submitButton = document.getElementsByClassName("submit")[0];
+        submitButton.setAttribute("type", "button");
+        function onMapSubmit() {
+            fetch("/uploadmap.php", {
+                method: "POST",
+                body: "-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"action\"\n\nUPLOAD\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"mapfile\"; filename=\"data.txt\"\nContent-Type: text/plain\n\n".concat(textArea.value, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"name\"\n\n").concat(mapName.value, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"format\"\n\nAWBW\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"overwrite\"\n\n").concat(overwriteMap.value, "\n-----------------------------216783749517670898471830319234--"),
+                headers: {
+                    "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                }
+            });
+        }
+        submitButton.onclick = onMapSubmit;
+    }
+    // EDITMAP.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
         theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
         autosaveScript();
@@ -528,10 +534,12 @@
         clickThroughScript();
         symmetryCheckerScript();
     }
-    // EDITMAP.PHP END
-    // DESIGN.PHP START
+    // DESIGN.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/design.php")) {
         createMapScript();
     }
-    // DESIGN.PHP END
+    // UPLOADMAP.PHP
+    if (window.location.toString().startsWith("https://awbw.amarriner.com/uploadmap.php")) {
+        uploadMapScript();
+    }
 })();
