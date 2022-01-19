@@ -1,5 +1,5 @@
 // VARIABLES
-declare var showBuildings: object;
+declare var showBuildings: Function;
 declare var buildingVisible: boolean;
 declare var currentBuilding: HTMLElement;
 declare var gameContainer: HTMLElement;
@@ -30,6 +30,10 @@ declare function getOffset(el: HTMLElement): Offset;
 declare function applyCSS(el: HTMLElement, styles: CssStyles): void;
 declare function closeMenu(el: HTMLElement): void;
 declare function changeSquare(id: number, terrain_name: string, t: string): void;
+declare function showBaseTerrain(): void;
+declare function showUnits(): void;
+declare function showBaseTerrain(): void;
+declare function changeCountry(new_code: string, new_country: string): void;
 
 // OBJECTS
 declare type Offset = {
