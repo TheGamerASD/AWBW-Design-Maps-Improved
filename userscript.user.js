@@ -519,6 +519,8 @@
                 headers: {
                     "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
                 }
+            }).then(function (html) {
+                document.body.innerHTML = html;
             });
         }
         submitButton.onclick = onMapSubmit;
