@@ -1382,6 +1382,7 @@ ${overwriteMap.value}
                 }).then((html: Response) => {
                     html.text().then((text: string) => {
                         document.body.innerHTML = text;
+                        setTimeout(() => window.location.href = "https://awbw.amarriner.com/design.php", 1500);
                     });
                 })
         }
