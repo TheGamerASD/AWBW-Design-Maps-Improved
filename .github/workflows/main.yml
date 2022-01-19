@@ -21,4 +21,4 @@ jobs:
         run: tsc -p tsconfig.json
 
       - name: Rename Output File
-        run: rename userscript.js userscript.user.js
+        run: Rename-Item -Path "userscript.js" -NewName "userscript.user.js"
