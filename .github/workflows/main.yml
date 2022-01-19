@@ -22,9 +22,6 @@ jobs:
 
       - name: Rename Output File
         run: Rename-Item -Path "userscript.js" -NewName "userscript.user.js"
-
-      - name: Switch From HTTPS to SSH
-        run: git remote set-url origin ${{ secrets.ssh }}
         
       - name: Check For Changes
         run: git status
