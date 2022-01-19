@@ -5,6 +5,7 @@
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/editmap.php?maps_id=*
 // @match        https://awbw.amarriner.com/design.php*
+// @match        https://awbw.amarriner.com/uploadmap.php*
 // @icon         https://cdn.discordapp.com/emojis/929147036677324800.webp?size=96&quality=lossless
 // @grant        none
 // ==/UserScript==
@@ -12,13 +13,8 @@
 (function () {
     'use strict';
 
-    // GLOBAL VARIABLES START
-
     var theme: string;
 
-    // GLOBAL VARIABLES END
-
-    // AUTOSAVE START
     function autosaveScript() {
         'use strict';
 
@@ -79,9 +75,7 @@
 
         window.onbeforeunload = onLeavePage;
     }
-    // AUTOSAVE END
 
-    // INFO PANEL START
     function infoPanelScript() {
         'use strict';
 
@@ -156,9 +150,6 @@
 
         setInterval(updateInfo, 500);
     }
-    // INFO PANEL END
-
-    // ASYNC SAVE START
 
     function asyncSaveScript() {
         var saveButton: HTMLElement = Object.values(document.getElementsByClassName("norm2")).filter(e => e.textContent.includes("Save"))[0] as HTMLElement;
@@ -196,10 +187,6 @@
         saveButton.setAttribute("href", "#");
         saveButton.onclick = saveAsync;
     }
-
-    // ASYNC SAVE END
-
-    // UNIT SELECT START
 
     function unitSelectScript() {
         var innerUnitTable = document.getElementById("design-map-unit-table").childNodes[1].childNodes[1].childNodes[2].childNodes[0] as HTMLElement;
@@ -435,10 +422,6 @@
     </tbody>
 </table>`;
     }
-
-    // UNIT SELECT END
-
-    // TERRAIN SELECT START
 
     function terrainSelectScript() {
         var tableElement = document.getElementById("design-map-building-table").childNodes[1].childNodes[1].childNodes[2].childNodes[0].childNodes[0].childNodes[1].childNodes[2].childNodes[0] as HTMLElement;
@@ -954,10 +937,6 @@
         containerTable.style.width = "175";
     }
 
-    // TERRAIN SELECT END
-
-    // CREATE MAP START
-
     function createMapScript() {
         var innerCreateMapTable = Object.values(document.querySelectorAll("form")).filter(f => f.name === "" && f.action === "https://awbw.amarriner.com/design.php" && f.className !== "login-form")[0].parentElement;
         innerCreateMapTable.innerHTML = `<form name=\"\" create1=\"\" action=\"design.php\" method=\"post\">
@@ -988,10 +967,6 @@
     <input type=\"hidden\" name=\"maps_new\" value=\"1\">
 </form>`;
     }
-
-    // CREATE MAP END
-
-    // CLICKTHROUGH START
 
     function clickThroughScript() {
         for (var b = 0; b <= mapheight; b++) {
@@ -1126,10 +1101,6 @@
 
         fixBorder();
     }
-
-    // CLICKTHROUGH END
-
-    // SYMMETRY CHECKER START
 
     function symmetryCheckerScript() {
         var mapObj: Array<string[]> = [];
@@ -1355,9 +1326,66 @@
         setInterval(checkLoop, 2000);
     }
 
-    // SYMMETRY CHECKER END
+    function uploadMapScript() {
+        var trow: HTMLTableRowElement = document.createElement("tr");
+        trow.innerHTML = `<td style="vertical-align: top;">
+Map Data:
+</td>
+<td>
+<textarea style="width: 80%; height: 400px;"></textarea>
+</td>`;
 
-    // EDITMAP.PHP START
+        var textArea: HTMLTextAreaElement = trow.querySelector("textarea");
+        var mapName: HTMLInputElement = document.getElementsByName("name")[0] as HTMLInputElement;
+        var overwriteMap: HTMLSelectElement = document.getElementsByName("overwrite")[0] as HTMLSelectElement;
+
+        var tbody: HTMLTableSectionElement = document.getElementsByClassName("borderwhite")[0].children[0].children[0] as HTMLTableSectionElement;
+        tbody.insertBefore(trow, tbody.lastElementChild);
+
+        tbody.deleteRow(2);
+        tbody.deleteRow(0);
+
+        var submitButton: HTMLInputElement = document.getElementsByClassName("submit")[0] as HTMLInputElement;
+        submitButton.setAttribute("type", "button");
+
+        function onMapSubmit() {
+            fetch("/uploadmap.php",
+                {
+                    method: "POST",
+
+                    body: `-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="action"
+
+UPLOAD
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="mapfile"; filename="data.txt"
+Content-Type: text/plain
+
+${textArea.value}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="name"
+
+${mapName.value}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="format"
+
+AWBW
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="overwrite"
+
+${overwriteMap.value}
+-----------------------------216783749517670898471830319234--`,
+                    headers:
+                    {
+                        "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                    }
+                })
+        }
+
+        submitButton.onclick = onMapSubmit;
+    }
+
+    // EDITMAP.PHP
 
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
         theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
@@ -1371,13 +1399,15 @@
         symmetryCheckerScript();
     }
 
-    // EDITMAP.PHP END
-
-    // DESIGN.PHP START
+    // DESIGN.PHP
 
     if (window.location.toString().startsWith("https://awbw.amarriner.com/design.php")) {
         createMapScript();
     }
 
-    // DESIGN.PHP END
+    // UPLOADMAP.PHP
+
+    if (window.location.toString().startsWith("https://awbw.amarriner.com/uploadmap.php")) {
+        uploadMapScript();
+    }
 })();
