@@ -1379,6 +1379,8 @@ ${overwriteMap.value}
                     {
                         "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
                     }
+                }).then((html: Response) => {
+                    document.body.innerHTML = html as unknown as string;
                 })
         }
 
