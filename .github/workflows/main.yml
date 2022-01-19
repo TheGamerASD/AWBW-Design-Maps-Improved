@@ -13,6 +13,12 @@ jobs:
       
       - name: Install Type Definitions
         run: npm i --save-dev @types/jquery
+        
+      - name: Delete Old File
+        run: del userscript.user.js
 
       - name: Build Project
-        run: tsc -p tsconfig.json --outfile userscript.user.js
+        run: tsc -p tsconfig.json
+
+      - name: Rename Output File
+        run: rename userscript.js userscript.user.js
