@@ -5,11 +5,11 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Build Project
-        run: tsc -p tsproject.json --outfile userscript.user.js
+        run: tsc -p tsconfig.json --outfile userscript.user.js
