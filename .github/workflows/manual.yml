@@ -11,7 +11,9 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Delete Old Release
-      run: if exist release.user.js del release.user.js
+      run: if(Test-Path ".\release.user.js" -eq $true) {
+        del release.user.js
+        }
       
     - name: Copy Indev Script
       run: copy userscript.user.js release.user.js
