@@ -594,8 +594,8 @@
             var selectSymm = document.getElementById("set-symmetry");
             var selectedSymm = parseInt(selectSymm.value);
             if (selectedSymm === 0) {
-                lastSymmetry = selectedSymm;
                 selectSymm.value = lastSymmetry.toString();
+                lastSymmetry = 0;
             }
             else {
                 lastSymmetry = selectedSymm;
