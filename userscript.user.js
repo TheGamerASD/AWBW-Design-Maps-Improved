@@ -529,6 +529,7 @@
         submitButton.onclick = onMapSubmit;
     }
     function hotkeysScript() {
+        var hotkeys = [];
         var Hotkey = /** @class */ (function () {
             function Hotkey(key, downFunc, upFunc) {
                 this.key = key;
@@ -537,7 +538,6 @@
             }
             return Hotkey;
         }());
-        var hotkeys = [];
         function onKeyDown(e) {
             if (e.repeat) {
                 return;
