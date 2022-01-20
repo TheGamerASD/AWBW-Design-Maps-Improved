@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.0
+// @version      1.1
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/editmap.php?maps_id=*
