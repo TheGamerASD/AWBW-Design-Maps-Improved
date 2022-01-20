@@ -12,6 +12,7 @@
 (function () {
     'use strict';
     var theme;
+    var lastSymmetry;
     function autosaveScript() {
         'use strict';
         var intervalID;
@@ -589,6 +590,18 @@
         addHotkey("^", function () { return changeCountry("pl", "purplelightning"); }, Function.prototype);
         addHotkey("&", function () { return changeCountry("ar", "acidrain"); }, Function.prototype);
         addHotkey("*", function () { return changeCountry("wn", "whitenova"); }, Function.prototype);
+        addHotkey("Control", function () {
+            var selectSymm = document.getElementById("set-symmetry");
+            var selectedSymm = parseInt(selectSymm.value);
+            if (selectedSymm === 0) {
+                lastSymmetry = selectedSymm;
+                selectSymm.value = lastSymmetry.toString();
+            }
+            else {
+                lastSymmetry = selectedSymm;
+                selectSymm.value = "0";
+            }
+        }, Function.prototype);
         document.getElementById("current-terrain").setAttribute("title", "Select base terrain (A)");
         document.getElementById("current-building").setAttribute("title", "Select building (S)");
         document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
@@ -597,6 +610,7 @@
     // EDITMAP.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
         theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+        lastSymmetry = 0;
         autosaveScript();
         infoPanelScript();
         asyncSaveScript();
