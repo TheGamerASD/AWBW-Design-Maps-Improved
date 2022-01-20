@@ -14,6 +14,7 @@
     'use strict';
 
     var theme: string;
+    var lastSymmetry: number;
 
     function autosaveScript() {
         'use strict';
@@ -1460,6 +1461,18 @@ ${overwriteMap.value}
         addHotkey("&", () => changeCountry("ar", "acidrain"), Function.prototype);
         addHotkey("*", () => changeCountry("wn", "whitenova"), Function.prototype);
 
+        addHotkey("Control", () => {
+            var selectSymm: HTMLSelectElement = document.getElementById("set-symmetry") as HTMLSelectElement;
+            var selectedSymm: number = parseInt(selectSymm.value);
+            if (selectedSymm === 0) {
+                lastSymmetry = selectedSymm;
+                selectSymm.value = lastSymmetry.toString();
+            } else {
+                lastSymmetry = selectedSymm;
+                selectSymm.value = "0";
+            }
+        }, Function.prototype);
+
         document.getElementById("current-terrain").setAttribute("title", "Select base terrain (A)")
         document.getElementById("current-building").setAttribute("title", "Select building (S)")
         document.getElementById("current-unit").setAttribute("title", "Select unit (D)")
@@ -1470,6 +1483,7 @@ ${overwriteMap.value}
 
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
         theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+        lastSymmetry = 0;
 
         autosaveScript();
         infoPanelScript();
