@@ -1,0 +1,37 @@
+name: Publish New Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Publish:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Delete Old Release
+      run: del release.user.js
+      
+    - name: Copy Indev Script
+      run: copy userscript.user.js release.user.js
+      
+    - name: Check For Changes
+      run: git status
+        
+    - name: Stage Changed Files
+      run: git add .
+        
+    - name: Set Git Identity
+      run: |
+          git config user.email "39596187+RealMVC@users.noreply.github.com"
+          git config user.name "RealMVC"
+  
+    - name: Commit Changed Files
+      run: git commit -m "Updated userscript.user.js"
+        
+    - name: Fetch From Master
+      run: git fetch origin main
+        
+    - name: Push To Master
+      run: git push origin HEAD:main
