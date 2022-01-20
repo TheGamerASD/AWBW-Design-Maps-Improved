@@ -1437,9 +1437,9 @@ ${overwriteMap.value}
             hotkeys.push(new Hotkey(key, downFunc, upFunc));
         }
 
-        addHotkey("a", showBaseTerrain, showBaseTerrain);
-        addHotkey("s", showBuildings, showBuildings);
-        addHotkey("d", showUnits, showUnits);
+        addHotkey("a", () => { if (!terrainVisible) showBaseTerrain() }, () => { if (terrainVisible) showBaseTerrain() });
+        addHotkey("s", () => { if (!buildingVisible) showBuildings() }, () => { if (buildingVisible) showBuildings() });
+        addHotkey("d", () => { if (!unitVisible) showUnits() }, () => { if (unitVisible) showUnits() });
         addHotkey("f", () => changeSquare(-1, "delete-image", "delete"), Function.prototype);
 
         addHotkey("1", () => changeCountry("os", "orangestar"), Function.prototype);
