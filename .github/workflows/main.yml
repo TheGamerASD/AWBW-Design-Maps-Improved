@@ -3,6 +3,8 @@ name: Automatic Build
 on:
   push:
     branches: [ main ]
+    paths:
+      - userscript.ts
 
 jobs:
   Build:
