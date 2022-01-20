@@ -563,9 +563,15 @@
         function addHotkey(key, downFunc, upFunc) {
             hotkeys.push(new Hotkey(key, downFunc, upFunc));
         }
-        addHotkey("a", showBaseTerrain, showBaseTerrain);
-        addHotkey("s", showBuildings, showBuildings);
-        addHotkey("d", showUnits, showUnits);
+        addHotkey("a", function () { if (!terrainVisible)
+            showBaseTerrain(); }, function () { if (terrainVisible)
+            showBaseTerrain(); });
+        addHotkey("s", function () { if (!buildingVisible)
+            showBuildings(); }, function () { if (buildingVisible)
+            showBuildings(); });
+        addHotkey("d", function () { if (!unitVisible)
+            showUnits(); }, function () { if (unitVisible)
+            showUnits(); });
         addHotkey("f", function () { return changeSquare(-1, "delete-image", "delete"); }, Function.prototype);
         addHotkey("1", function () { return changeCountry("os", "orangestar"); }, Function.prototype);
         addHotkey("2", function () { return changeCountry("bm", "bluemoon"); }, Function.prototype);
