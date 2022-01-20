@@ -530,23 +530,28 @@
     }
     function hotkeysScript() {
         var Hotkey = /** @class */ (function () {
-            function Hotkey(key, downFunc, upFunc, shiftRequired) {
+            function Hotkey(key, downFunc, upFunc) {
                 this.key = key;
                 this.downFunc = downFunc;
                 this.upFunc = upFunc;
-                this.shiftRequired = shiftRequired;
             }
             return Hotkey;
         }());
         var hotkeys = [];
         function onKeyDown(e) {
+            if (e.repeat) {
+                return;
+            }
             for (var i = 0; i < hotkeys.length; i++) {
-                if (hotkeys[i].key === e.key && (!hotkeys[i].shiftRequired || e.shiftKey)) {
+                if (hotkeys[i].key === e.key) {
                     hotkeys[i].downFunc();
                 }
             }
         }
         function onKeyUp(e) {
+            if (e.repeat) {
+                return;
+            }
             for (var i = 0; i < hotkeys.length; i++) {
                 if (hotkeys[i].key === e.key) {
                     hotkeys[i].upFunc();
@@ -555,29 +560,29 @@
         }
         window.onkeydown = onKeyDown;
         window.onkeyup = onKeyUp;
-        function addHotkey(key, downFunc, upFunc, shiftRequired) {
-            hotkeys.push(new Hotkey(key, downFunc, upFunc, shiftRequired));
+        function addHotkey(key, downFunc, upFunc) {
+            hotkeys.push(new Hotkey(key, downFunc, upFunc));
         }
-        addHotkey("a", showBaseTerrain, showBaseTerrain, false);
-        addHotkey("s", showBuildings, showBuildings, false);
-        addHotkey("d", showUnits, showUnits, false);
-        addHotkey("f", function () { return changeSquare(-1, "delete-image", "delete"); }, Function.prototype, false);
-        addHotkey("1", function () { return changeCountry("os", "orangestar"); }, Function.prototype, false);
-        addHotkey("2", function () { return changeCountry("bm", "bluemoon"); }, Function.prototype, false);
-        addHotkey("3", function () { return changeCountry("ge", "greenearth"); }, Function.prototype, false);
-        addHotkey("4", function () { return changeCountry("yc", "yellowcomet"); }, Function.prototype, false);
-        addHotkey("5", function () { return changeCountry("bh", "blackhole"); }, Function.prototype, false);
-        addHotkey("6", function () { return changeCountry("rf", "redfire"); }, Function.prototype, false);
-        addHotkey("7", function () { return changeCountry("gs", "greysky"); }, Function.prototype, false);
-        addHotkey("8", function () { return changeCountry("bd", "browndesert"); }, Function.prototype, false);
-        addHotkey("1", function () { return changeCountry("ab", "amberblaze"); }, Function.prototype, true);
-        addHotkey("2", function () { return changeCountry("js", "jadesun"); }, Function.prototype, true);
-        addHotkey("3", function () { return changeCountry("ci", "cobaltice"); }, Function.prototype, true);
-        addHotkey("4", function () { return changeCountry("pc", "pinkcosmos"); }, Function.prototype, true);
-        addHotkey("5", function () { return changeCountry("tg", "tealgalaxy"); }, Function.prototype, true);
-        addHotkey("6", function () { return changeCountry("pl", "purplelightning"); }, Function.prototype, true);
-        addHotkey("7", function () { return changeCountry("ar", "acidrain"); }, Function.prototype, true);
-        addHotkey("8", function () { return changeCountry("wn", "whitenova"); }, Function.prototype, true);
+        addHotkey("a", showBaseTerrain, showBaseTerrain);
+        addHotkey("s", showBuildings, showBuildings);
+        addHotkey("d", showUnits, showUnits);
+        addHotkey("f", function () { return changeSquare(-1, "delete-image", "delete"); }, Function.prototype);
+        addHotkey("1", function () { return changeCountry("os", "orangestar"); }, Function.prototype);
+        addHotkey("2", function () { return changeCountry("bm", "bluemoon"); }, Function.prototype);
+        addHotkey("3", function () { return changeCountry("ge", "greenearth"); }, Function.prototype);
+        addHotkey("4", function () { return changeCountry("yc", "yellowcomet"); }, Function.prototype);
+        addHotkey("5", function () { return changeCountry("bh", "blackhole"); }, Function.prototype);
+        addHotkey("6", function () { return changeCountry("rf", "redfire"); }, Function.prototype);
+        addHotkey("7", function () { return changeCountry("gs", "greysky"); }, Function.prototype);
+        addHotkey("8", function () { return changeCountry("bd", "browndesert"); }, Function.prototype);
+        addHotkey("!", function () { return changeCountry("ab", "amberblaze"); }, Function.prototype);
+        addHotkey("@", function () { return changeCountry("js", "jadesun"); }, Function.prototype);
+        addHotkey("#", function () { return changeCountry("ci", "cobaltice"); }, Function.prototype);
+        addHotkey("$", function () { return changeCountry("pc", "pinkcosmos"); }, Function.prototype);
+        addHotkey("%", function () { return changeCountry("tg", "tealgalaxy"); }, Function.prototype);
+        addHotkey("^", function () { return changeCountry("pl", "purplelightning"); }, Function.prototype);
+        addHotkey("&", function () { return changeCountry("ar", "acidrain"); }, Function.prototype);
+        addHotkey("*", function () { return changeCountry("wn", "whitenova"); }, Function.prototype);
     }
     // EDITMAP.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
