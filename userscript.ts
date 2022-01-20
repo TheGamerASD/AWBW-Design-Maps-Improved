@@ -1392,6 +1392,8 @@ ${overwriteMap.value}
 
     function hotkeysScript() {
 
+        var hotkeys: Hotkey[] = [];
+
         class Hotkey {
             key: string;
             downFunc: Function;
@@ -1403,8 +1405,6 @@ ${overwriteMap.value}
                 this.upFunc = upFunc;
             }
         }
-
-        var hotkeys: Hotkey[] = [];
 
         function onKeyDown(e: KeyboardEvent): void {
             if (e.repeat) {
