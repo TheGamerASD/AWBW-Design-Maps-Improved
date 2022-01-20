@@ -589,6 +589,10 @@
         addHotkey("^", function () { return changeCountry("pl", "purplelightning"); }, Function.prototype);
         addHotkey("&", function () { return changeCountry("ar", "acidrain"); }, Function.prototype);
         addHotkey("*", function () { return changeCountry("wn", "whitenova"); }, Function.prototype);
+        document.getElementById("current-terrain").setAttribute("title", "Select base terrain (A)");
+        document.getElementById("current-building").setAttribute("title", "Select building (S)");
+        document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
+        document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)");
     }
     // EDITMAP.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
