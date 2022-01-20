@@ -26,11 +26,11 @@ This is a Tampermonkey user script for improving the Advance Wars By Web mapmaki
 * Improved Create Map Form
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/createmapform.png)
-* Fileless Upload Map
+* Fileless Upload Map **(v1.1)**
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/uploadmap.png)
 
-* Hotkeys
+* Hotkeys **(v1.1)**
   - Hold **A** to open terrain menu
   - Hold **S** to open buildings menu
   - Hold **D** to open unit menu
