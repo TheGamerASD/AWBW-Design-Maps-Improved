@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.0
+// @version      1.1
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/editmap.php?maps_id=*
@@ -12,6 +12,7 @@
 (function () {
     'use strict';
     var theme;
+    var lastSymmetry;
     function autosaveScript() {
         'use strict';
         var intervalID;
@@ -529,6 +530,7 @@
         submitButton.onclick = onMapSubmit;
     }
     function hotkeysScript() {
+        var hotkeys = [];
         var Hotkey = /** @class */ (function () {
             function Hotkey(key, downFunc, upFunc) {
                 this.key = key;
@@ -537,7 +539,6 @@
             }
             return Hotkey;
         }());
-        var hotkeys = [];
         function onKeyDown(e) {
             if (e.repeat) {
                 return;
@@ -589,10 +590,27 @@
         addHotkey("^", function () { return changeCountry("pl", "purplelightning"); }, Function.prototype);
         addHotkey("&", function () { return changeCountry("ar", "acidrain"); }, Function.prototype);
         addHotkey("*", function () { return changeCountry("wn", "whitenova"); }, Function.prototype);
+        addHotkey("Control", function () {
+            var selectSymm = document.getElementById("set-symmetry");
+            var selectedSymm = parseInt(selectSymm.value);
+            if (selectedSymm === 0) {
+                selectSymm.value = lastSymmetry.toString();
+                lastSymmetry = 0;
+            }
+            else {
+                lastSymmetry = selectedSymm;
+                selectSymm.value = "0";
+            }
+        }, Function.prototype);
+        document.getElementById("current-terrain").setAttribute("title", "Select base terrain (A)");
+        document.getElementById("current-building").setAttribute("title", "Select building (S)");
+        document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
+        document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)");
     }
     // EDITMAP.PHP
     if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
         theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+        lastSymmetry = 0;
         autosaveScript();
         infoPanelScript();
         asyncSaveScript();
