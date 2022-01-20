@@ -30,7 +30,7 @@ jobs:
           git config user.name "RealMVC"
   
     - name: Commit Changed Files
-      run: git commit -m "Updated userscript.user.js"
+      run: git commit -m "Updated release.user.js"
         
     - name: Fetch From Master
       run: git fetch origin main
