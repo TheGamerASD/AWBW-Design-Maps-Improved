@@ -1459,6 +1459,11 @@ ${overwriteMap.value}
         addHotkey("^", () => changeCountry("pl", "purplelightning"), Function.prototype);
         addHotkey("&", () => changeCountry("ar", "acidrain"), Function.prototype);
         addHotkey("*", () => changeCountry("wn", "whitenova"), Function.prototype);
+
+        document.getElementById("current-terrain").setAttribute("title", "Select base terrain (A)")
+        document.getElementById("current-building").setAttribute("title", "Select building (S)")
+        document.getElementById("current-unit").setAttribute("title", "Select unit (D)")
+        document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)")
     }
 
     // EDITMAP.PHP
