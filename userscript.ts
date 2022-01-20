@@ -1465,8 +1465,8 @@ ${overwriteMap.value}
             var selectSymm: HTMLSelectElement = document.getElementById("set-symmetry") as HTMLSelectElement;
             var selectedSymm: number = parseInt(selectSymm.value);
             if (selectedSymm === 0) {
-                lastSymmetry = selectedSymm;
                 selectSymm.value = lastSymmetry.toString();
+                lastSymmetry = 0;
             } else {
                 lastSymmetry = selectedSymm;
                 selectSymm.value = "0";
