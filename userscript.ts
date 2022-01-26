@@ -135,18 +135,18 @@
         var seas: HTMLElement = document.getElementById("seas");
 
         function updateInfo() {
-            cities.textContent = getTiles("city\.");
-            bases.textContent = getTiles("base\.");
-            ports.textContent = getTiles("(?<!air)port\.");
-            airports.textContent = getTiles("airport\.");
-            towers.textContent = getTiles("comtower\.");
-            labs.textContent = getTiles("lab\.");
-            plains.textContent = getTiles("plain\.");
-            roads.textContent = getTiles("(road\.|bridge\.)");
-            forests.textContent = getTiles("wood\.");
-            mountains.textContent = getTiles("mountain\.");
-            rivers.textContent = getTiles("river\.");
-            seas.textContent = getTiles("(sea\.|reef\.)");
+            cities.textContent = getTiles("city\\.");
+            bases.textContent = getTiles("base\\.");
+            ports.textContent = getTiles("(?<!air)port\\.");
+            airports.textContent = getTiles("airport\\.");
+            towers.textContent = getTiles("comtower\\.");
+            labs.textContent = getTiles("lab\\.");
+            plains.textContent = getTiles("plain\\.");
+            roads.textContent = getTiles("(road\\.|bridge\\.)");
+            forests.textContent = getTiles("wood\\.");
+            mountains.textContent = getTiles("mountain\\.");
+            rivers.textContent = getTiles("river\\.");
+            seas.textContent = getTiles("(sea\\.|reef\\.)");
         }
 
         setInterval(updateInfo, 500);
