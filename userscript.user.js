@@ -503,7 +503,7 @@
     }
     function uploadMapScript() {
         var trow = document.createElement("tr");
-        trow.innerHTML = "<td style=\"vertical-align: top;\">\nMap Data:\n</td>\n<td>\n<textarea style=\"width: 80%; height: 400px;\"></textarea>\n</td>";
+        trow.innerHTML = "<td style=\"vertical-align: top;\">\nMap Data:\n</td>\n<td>\n<textarea wrap=\"off\" style=\"width: 80%; height: 400px; resize: none;\"></textarea>\n</td>";
         var textArea = trow.querySelector("textarea");
         var mapName = document.getElementsByName("name")[0];
         var overwriteMap = document.getElementsByName("overwrite")[0];
