@@ -1333,7 +1333,7 @@
 Map Data:
 </td>
 <td>
-<textarea style="width: 80%; height: 400px;"></textarea>
+<textarea wrap="off" style="width: 80%; height: 400px; resize: none;"></textarea>
 </td>`;
 
         var textArea: HTMLTextAreaElement = trow.querySelector("textarea");
