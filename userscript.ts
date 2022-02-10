@@ -16,6 +16,54 @@
     var theme: string;
     var lastSymmetry: number;
 
+    enum Pages {
+        All = "https://awbw.amarriner.com",
+        YourMaps = "https://awbw.amarriner.com/design.php",
+        MapEditor = "https://awbw.amarriner.com/editmap.php?maps_id=",
+        UploadMap = "https://awbw.amarriner.com/uploadmap.php"
+    }
+
+    class Module {
+        public func: Function;
+        public page: string;
+
+        constructor(func: Function, page: Pages) {
+            this.func = func;
+            this.page = page;
+        }
+    }
+
+    abstract class ModuleManager {
+        private static modules: Module[] = [];
+
+        public static registerModule(func: Function, page: Pages) {
+            this.modules.push(new Module(func, page));
+        }
+
+        public static runModules() {
+            for (let module of this.modules) {
+                if (window.location.href.startsWith(module.page)) {
+                    try
+                    {
+                        module.func();
+                    }
+                    catch (error)
+                    {
+                        console.log(error);
+                    }
+                }
+            }
+        }
+    }
+
+    function setGlobalVariables() {
+        if(window.location.href.startsWith(Pages.MapEditor))
+        {
+            theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+            lastSymmetry = 0;
+        }
+    }
+
     function autosaveScript() {
         'use strict';
 
@@ -1479,31 +1527,17 @@ ${overwriteMap.value}
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)")
     }
 
-    // EDITMAP.PHP
+    ModuleManager.registerModule(setGlobalVariables, Pages.All);
+    ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
+    ModuleManager.registerModule(asyncSaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(unitSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(terrainSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(clickThroughScript, Pages.MapEditor);
+    ModuleManager.registerModule(symmetryCheckerScript, Pages.MapEditor);
+    ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
+    ModuleManager.registerModule(createMapScript, Pages.YourMaps);
+    ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
 
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
-        theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
-        lastSymmetry = 0;
-
-        autosaveScript();
-        infoPanelScript();
-        asyncSaveScript();
-        unitSelectScript();
-        terrainSelectScript();
-        clickThroughScript();
-        symmetryCheckerScript();
-        hotkeysScript();
-    }
-
-    // DESIGN.PHP
-
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/design.php")) {
-        createMapScript();
-    }
-
-    // UPLOADMAP.PHP
-
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/uploadmap.php")) {
-        uploadMapScript();
-    }
+    ModuleManager.runModules();
 })();
