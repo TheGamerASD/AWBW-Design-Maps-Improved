@@ -13,6 +13,48 @@
     'use strict';
     var theme;
     var lastSymmetry;
+    var Pages;
+    (function (Pages) {
+        Pages["All"] = "https://awbw.amarriner.com";
+        Pages["YourMaps"] = "https://awbw.amarriner.com/design.php";
+        Pages["MapEditor"] = "https://awbw.amarriner.com/editmap.php?maps_id=";
+        Pages["UploadMap"] = "https://awbw.amarriner.com/uploadmap.php";
+    })(Pages || (Pages = {}));
+    var Module = /** @class */ (function () {
+        function Module(func, page) {
+            this.func = func;
+            this.page = page;
+        }
+        return Module;
+    }());
+    var ModuleManager = /** @class */ (function () {
+        function ModuleManager() {
+        }
+        ModuleManager.registerModule = function (func, page) {
+            this.modules.push(new Module(func, page));
+        };
+        ModuleManager.runModules = function () {
+            for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
+                var module = _a[_i];
+                if (window.location.href.startsWith(module.page)) {
+                    try {
+                        module.func();
+                    }
+                    catch (error) {
+                        console.log(error);
+                    }
+                }
+            }
+        };
+        ModuleManager.modules = [];
+        return ModuleManager;
+    }());
+    function setGlobalVariables() {
+        if (window.location.href.startsWith(Pages.MapEditor)) {
+            theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+            lastSymmetry = 0;
+        }
+    }
     function autosaveScript() {
         'use strict';
         var intervalID;
@@ -607,25 +649,16 @@
         document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)");
     }
-    // EDITMAP.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
-        theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
-        lastSymmetry = 0;
-        autosaveScript();
-        infoPanelScript();
-        asyncSaveScript();
-        unitSelectScript();
-        terrainSelectScript();
-        clickThroughScript();
-        symmetryCheckerScript();
-        hotkeysScript();
-    }
-    // DESIGN.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/design.php")) {
-        createMapScript();
-    }
-    // UPLOADMAP.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/uploadmap.php")) {
-        uploadMapScript();
-    }
+    ModuleManager.registerModule(setGlobalVariables, Pages.All);
+    ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
+    ModuleManager.registerModule(asyncSaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(unitSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(terrainSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(clickThroughScript, Pages.MapEditor);
+    ModuleManager.registerModule(symmetryCheckerScript, Pages.MapEditor);
+    ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
+    ModuleManager.registerModule(createMapScript, Pages.YourMaps);
+    ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
+    ModuleManager.runModules();
 })();
