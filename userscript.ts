@@ -1578,6 +1578,8 @@ ${overwriteMap.value}
                         previewElement = document.createElement("div");
                         previewElement.innerHTML = html;
                         previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; top: 127px; position: relative; left: -1px;`);
+                        let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
+                        mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
                     },
