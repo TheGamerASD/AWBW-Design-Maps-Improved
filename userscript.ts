@@ -21,7 +21,8 @@
         All = "https://awbw.amarriner.com",
         YourMaps = "https://awbw.amarriner.com/design.php",
         MapEditor = "https://awbw.amarriner.com/editmap.php?maps_id=",
-        UploadMap = "https://awbw.amarriner.com/uploadmap.php"
+        UploadMap = "https://awbw.amarriner.com/uploadmap.php",
+        PreviewMap = "https://awbw.amarriner.com/prevmaps.php?maps_id="
     }
 
     class Module {
@@ -1600,6 +1601,12 @@ ${overwriteMap.value}
         previewCheckbox.onchange = previewCheckboxToggled;
     }
 
+    function fixCacheScript()
+    {
+        let mapBackground: HTMLImageElement = document.getElementById("map-background") as HTMLImageElement;
+        mapBackground.src = mapBackground.src + "?" + Date.now();
+    }
+
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -1612,6 +1619,7 @@ ${overwriteMap.value}
     ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
+    ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
 
     ModuleManager.runModules();
 })();
