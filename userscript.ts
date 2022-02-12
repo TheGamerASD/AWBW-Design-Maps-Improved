@@ -1576,7 +1576,7 @@ ${overwriteMap.value}
                         let gamemap: HTMLElement = document.getElementById("gamemap");
                         previewElement = document.createElement("div");
                         previewElement.innerHTML = html;
-                        previewElement.setAttribute("style", doc.getElementById("gamemap").getAttribute("style"));
+                        previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; top: 127px; position: relative; left: -1px;`);
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
                     },
