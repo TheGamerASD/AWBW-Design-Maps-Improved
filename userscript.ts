@@ -3,9 +3,7 @@
 // @version      1.1
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
-// @match        https://awbw.amarriner.com/editmap.php?maps_id=*
-// @match        https://awbw.amarriner.com/design.php*
-// @match        https://awbw.amarriner.com/uploadmap.php*
+// @match        https://awbw.amarriner.com/*
 // @icon         https://cdn.discordapp.com/emojis/929147036677324800.webp?size=96&quality=lossless
 // @grant        none
 // ==/UserScript==
