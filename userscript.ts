@@ -1569,6 +1569,7 @@ ${overwriteMap.value}
                     method: "GET",
                     url: mapLink,
                     contentType: "text/html; charset=UTF-8",
+                    cache: false,
                     success: function(data: string) {
                         let doc: Document = new DOMParser().parseFromString(data, "text/html");
                         let html: string = doc.getElementById("gamemap").innerHTML;
