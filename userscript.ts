@@ -1527,6 +1527,59 @@ ${overwriteMap.value}
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)")
     }
 
+    function previewScript()
+    {
+        let saveButton: HTMLElement = Object.values(document.getElementsByClassName("norm")).filter(e => e.textContent.includes("Save"))[0] as HTMLElement;
+        saveButton.parentElement.innerHTML += `<td class="norm" style="border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;" height="30"><a class="norm2" href="#" style="display:block; height: 100%; cursor: default;">
+<span class="small_text" style="line-height:29px; display: block; vertical-align: middle;" title="Toggle Preview Mode">
+<img style="vertical-align: middle;" src="terrain/editmap.gif">
+<b style="vertical-align:middle;">Preview</b>
+<input type="checkbox" id="preview_checkbox" style="vertical-align: middle; cursor: pointer;">
+</span></a>
+</td>`;
+
+        let previewCheckbox: HTMLInputElement = document.getElementById("preview_checkbox") as HTMLInputElement;
+
+        function previewCheckboxToggled(e: Event)
+        {
+            if(previewCheckbox.checked)
+            {
+                let mapLink: string = (document.getElementById("design-map-name").childNodes[0] as HTMLAnchorElement).href;
+                mapLink = mapLink.replace("editmap.php", "prevmaps.php");
+
+                let autosaveCheckbox = document.getElementById("autosave_checkbox") as HTMLInputElement;
+
+                if(autosaveCheckbox.checked)
+                {
+                    $.ajax({
+                        method: "POST",
+                        url: "updatemap.php",
+                        contentType: "application/x-www-form-urlencoded",
+                        data: $('#map_form').serialize()
+                    });
+                }
+
+                $.ajax({
+                    method: "GET",
+                    url: mapLink,
+                    contentType: "text/html; charset=UTF-8",
+                    success: function(data: string) {
+                        console.log(data);
+                    },
+                    error: function() {
+                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.")
+                    }
+                });
+            }
+            else
+            {
+
+            }
+        }
+
+        previewCheckbox.onchange = previewCheckboxToggled;
+    }
+
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -1536,6 +1589,7 @@ ${overwriteMap.value}
     ModuleManager.registerModule(clickThroughScript, Pages.MapEditor);
     ModuleManager.registerModule(symmetryCheckerScript, Pages.MapEditor);
     ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
+    ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
 
