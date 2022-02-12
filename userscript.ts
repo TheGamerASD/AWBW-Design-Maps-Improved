@@ -1531,13 +1531,18 @@ ${overwriteMap.value}
     function previewScript()
     {
         let saveButton: HTMLElement = Object.values(document.getElementsByClassName("norm")).filter(e => e.textContent.includes("Save"))[0] as HTMLElement;
-        saveButton.parentElement.innerHTML += `<td class="norm" style="border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;" height="30"><a class="norm2" href="#" style="display:block; height: 100%; cursor: default;">
+        let previewButtonElement: HTMLTableCellElement = document.createElement("td");
+
+        previewButtonElement.innerHTML = `<a class="norm2" href="#" style="display:block; height: 100%; cursor: default;">
 <span class="small_text" style="line-height:29px; display: block; vertical-align: middle;" title="Toggle Preview Mode">
 <img style="vertical-align: middle;" src="terrain/editmap.gif">
 <b style="vertical-align:middle;">Preview</b>
 <input type="checkbox" id="preview_checkbox" style="vertical-align: middle; cursor: pointer;">
-</span></a>
-</td>`;
+</span></a>`;
+        previewButtonElement.setAttribute("class", "norm");
+        previewButtonElement.setAttribute("style", "border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;");
+        previewButtonElement.setAttribute("height", "30");
+        saveButton.parentElement.appendChild(previewButtonElement);
 
         let previewCheckbox: HTMLInputElement = document.getElementById("preview_checkbox") as HTMLInputElement;
 
@@ -1566,11 +1571,12 @@ ${overwriteMap.value}
                     contentType: "text/html; charset=UTF-8",
                     success: function(data: string) {
                         let doc: Document = new DOMParser().parseFromString(data, "text/html");
-                        let html: string = doc.getElementById("gamemap").outerHTML;
+                        let html: string = doc.getElementById("gamemap").innerHTML;
                         let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
                         let gamemap: HTMLElement = document.getElementById("gamemap");
                         previewElement = document.createElement("div");
-                        previewElement.outerHTML = html;
+                        previewElement.innerHTML = html;
+                        previewElement.setAttribute("style", doc.getElementById("gamemap").getAttribute("style"));
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
                     },
