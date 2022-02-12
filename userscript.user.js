@@ -686,7 +686,7 @@
                         var gamemap = document.getElementById("gamemap");
                         previewElement = document.createElement("div");
                         previewElement.innerHTML = html;
-                        previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; top: 39.7%; position: relative; left: -0.3%;"));
+                        previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%"));
                         var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
