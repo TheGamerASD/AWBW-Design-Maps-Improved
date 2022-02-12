@@ -1579,7 +1579,7 @@ ${overwriteMap.value}
                         let gamemap: HTMLElement = document.getElementById("gamemap");
                         previewElement = document.createElement("div");
                         previewElement.innerHTML = html;
-                        previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%`);
+                        previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%; pointer-events: none;`);
                         let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
