@@ -15,6 +15,7 @@
 
     var theme: string;
     var lastSymmetry: number;
+    var previewElement: HTMLDivElement;
 
     enum Pages {
         All = "https://awbw.amarriner.com",
@@ -1564,7 +1565,14 @@ ${overwriteMap.value}
                     url: mapLink,
                     contentType: "text/html; charset=UTF-8",
                     success: function(data: string) {
-                        console.log(data);
+                        let doc: Document = new DOMParser().parseFromString(data, "text/html");
+                        let html: string = doc.getElementById("gamemap").outerHTML;
+                        let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
+                        let gamemap: HTMLElement = document.getElementById("gamemap");
+                        previewElement = document.createElement("div");
+                        previewElement.outerHTML = html;
+                        gamemap.style.display = "none";
+                        gamemapContainer.appendChild(previewElement);
                     },
                     error: function() {
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.")
@@ -1573,7 +1581,10 @@ ${overwriteMap.value}
             }
             else
             {
-
+                let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
+                let gamemap: HTMLElement = document.getElementById("gamemap");
+                gamemapContainer.removeChild(previewElement);
+                gamemap.style.removeProperty("display");
             }
         }
 
