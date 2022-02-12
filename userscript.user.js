@@ -649,6 +649,40 @@
         document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)");
     }
+    function previewScript() {
+        var saveButton = Object.values(document.getElementsByClassName("norm")).filter(function (e) { return e.textContent.includes("Save"); })[0];
+        saveButton.parentElement.innerHTML += "<td class=\"norm\" style=\"border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;\" height=\"30\"><a class=\"norm2\" href=\"#\" style=\"display:block; height: 100%; cursor: default;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n<input type=\"checkbox\" id=\"preview_checkbox\" style=\"vertical-align: middle; cursor: pointer;\">\n</span></a>\n</td>";
+        var previewCheckbox = document.getElementById("preview_checkbox");
+        function previewCheckboxToggled(e) {
+            if (previewCheckbox.checked) {
+                var mapLink = document.getElementById("design-map-name").childNodes[0].href;
+                mapLink = mapLink.replace("editmap.php", "prevmaps.php");
+                var autosaveCheckbox = document.getElementById("autosave_checkbox");
+                if (autosaveCheckbox.checked) {
+                    $.ajax({
+                        method: "POST",
+                        url: "updatemap.php",
+                        contentType: "application/x-www-form-urlencoded",
+                        data: $('#map_form').serialize()
+                    });
+                }
+                $.ajax({
+                    method: "GET",
+                    url: mapLink,
+                    contentType: "text/html; charset=UTF-8",
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function () {
+                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                    }
+                });
+            }
+            else {
+            }
+        }
+        previewCheckbox.onchange = previewCheckboxToggled;
+    }
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -658,6 +692,7 @@
     ModuleManager.registerModule(clickThroughScript, Pages.MapEditor);
     ModuleManager.registerModule(symmetryCheckerScript, Pages.MapEditor);
     ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
+    ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
     ModuleManager.runModules();
