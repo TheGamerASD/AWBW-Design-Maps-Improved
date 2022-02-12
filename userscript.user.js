@@ -13,6 +13,7 @@
     'use strict';
     var theme;
     var lastSymmetry;
+    var previewElement;
     var Pages;
     (function (Pages) {
         Pages["All"] = "https://awbw.amarriner.com";
@@ -671,7 +672,14 @@
                     url: mapLink,
                     contentType: "text/html; charset=UTF-8",
                     success: function (data) {
-                        console.log(data);
+                        var doc = new DOMParser().parseFromString(data, "text/html");
+                        var html = doc.getElementById("gamemap").outerHTML;
+                        var gamemapContainer = document.getElementById("gamemap-container");
+                        var gamemap = document.getElementById("gamemap");
+                        previewElement = document.createElement("div");
+                        previewElement.outerHTML = html;
+                        gamemap.style.display = "none";
+                        gamemapContainer.appendChild(previewElement);
                     },
                     error: function () {
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
@@ -679,6 +687,10 @@
                 });
             }
             else {
+                var gamemapContainer = document.getElementById("gamemap-container");
+                var gamemap = document.getElementById("gamemap");
+                gamemapContainer.removeChild(previewElement);
+                gamemap.style.removeProperty("display");
             }
         }
         previewCheckbox.onchange = previewCheckboxToggled;
