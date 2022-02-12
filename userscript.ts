@@ -1551,6 +1551,7 @@ ${overwriteMap.value}
         {
             if(previewCheckbox.checked)
             {
+                previewCheckbox.disabled = true;
                 let mapLink: string = (document.getElementById("design-map-name").childNodes[0] as HTMLAnchorElement).href;
                 mapLink = mapLink.replace("editmap.php", "prevmaps.php");
 
@@ -1583,9 +1584,11 @@ ${overwriteMap.value}
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
+                        previewCheckbox.disabled = false;
                     },
                     error: function() {
-                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.")
+                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                        previewCheckbox.disabled = false;
                     }
                 });
             }
