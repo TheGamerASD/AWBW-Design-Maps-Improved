@@ -662,6 +662,7 @@
         var previewCheckbox = document.getElementById("preview_checkbox");
         function previewCheckboxToggled(e) {
             if (previewCheckbox.checked) {
+                previewCheckbox.disabled = true;
                 var mapLink = document.getElementById("design-map-name").childNodes[0].href;
                 mapLink = mapLink.replace("editmap.php", "prevmaps.php");
                 var autosaveCheckbox = document.getElementById("autosave_checkbox");
@@ -690,9 +691,11 @@
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
+                        previewCheckbox.disabled = false;
                     },
                     error: function () {
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                        previewCheckbox.disabled = false;
                     }
                 });
             }
