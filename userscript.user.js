@@ -652,7 +652,12 @@
     }
     function previewScript() {
         var saveButton = Object.values(document.getElementsByClassName("norm")).filter(function (e) { return e.textContent.includes("Save"); })[0];
-        saveButton.parentElement.innerHTML += "<td class=\"norm\" style=\"border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;\" height=\"30\"><a class=\"norm2\" href=\"#\" style=\"display:block; height: 100%; cursor: default;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n<input type=\"checkbox\" id=\"preview_checkbox\" style=\"vertical-align: middle; cursor: pointer;\">\n</span></a>\n</td>";
+        var previewButtonElement = document.createElement("td");
+        previewButtonElement.innerHTML = "<a class=\"norm2\" href=\"#\" style=\"display:block; height: 100%; cursor: default;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n<input type=\"checkbox\" id=\"preview_checkbox\" style=\"vertical-align: middle; cursor: pointer;\">\n</span></a>";
+        previewButtonElement.setAttribute("class", "norm");
+        previewButtonElement.setAttribute("style", "border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;");
+        previewButtonElement.setAttribute("height", "30");
+        saveButton.parentElement.appendChild(previewButtonElement);
         var previewCheckbox = document.getElementById("preview_checkbox");
         function previewCheckboxToggled(e) {
             if (previewCheckbox.checked) {
@@ -673,11 +678,12 @@
                     contentType: "text/html; charset=UTF-8",
                     success: function (data) {
                         var doc = new DOMParser().parseFromString(data, "text/html");
-                        var html = doc.getElementById("gamemap").outerHTML;
+                        var html = doc.getElementById("gamemap").innerHTML;
                         var gamemapContainer = document.getElementById("gamemap-container");
                         var gamemap = document.getElementById("gamemap");
                         previewElement = document.createElement("div");
-                        previewElement.outerHTML = html;
+                        previewElement.innerHTML = html;
+                        previewElement.setAttribute("style", doc.getElementById("gamemap").getAttribute("style"));
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
                     },
