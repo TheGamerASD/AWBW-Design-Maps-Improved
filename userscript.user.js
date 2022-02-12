@@ -20,6 +20,7 @@
         Pages["YourMaps"] = "https://awbw.amarriner.com/design.php";
         Pages["MapEditor"] = "https://awbw.amarriner.com/editmap.php?maps_id=";
         Pages["UploadMap"] = "https://awbw.amarriner.com/uploadmap.php";
+        Pages["PreviewMap"] = "https://awbw.amarriner.com/prevmaps.php?maps_id=";
     })(Pages || (Pages = {}));
     var Module = /** @class */ (function () {
         function Module(func, page) {
@@ -704,6 +705,10 @@
         }
         previewCheckbox.onchange = previewCheckboxToggled;
     }
+    function fixCacheScript() {
+        var mapBackground = document.getElementById("map-background");
+        mapBackground.src = mapBackground.src + "?" + Date.now();
+    }
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -716,5 +721,6 @@
     ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
+    ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
     ModuleManager.runModules();
 })();
