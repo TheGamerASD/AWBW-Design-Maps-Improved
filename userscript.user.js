@@ -676,6 +676,7 @@
                     method: "GET",
                     url: mapLink,
                     contentType: "text/html; charset=UTF-8",
+                    cache: false,
                     success: function (data) {
                         var doc = new DOMParser().parseFromString(data, "text/html");
                         var html = doc.getElementById("gamemap").innerHTML;
