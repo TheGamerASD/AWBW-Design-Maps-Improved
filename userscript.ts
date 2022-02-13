@@ -1551,12 +1551,14 @@ ${overwriteMap.value}
             if(enabled)
             {
                 previewButtonDisabled = false;
-                previewButton.parentElement.style.backgroundColor = "white";
+                previewButton.parentElement.style.removeProperty("background-color");
+                previewButton.parentElement.style.cursor = "default";
             }
             else
             {
                 previewButtonDisabled = true;
                 previewButton.parentElement.style.backgroundColor = "silver";
+                previewButton.parentElement.style.cursor = "pointer";
             }
 
             previewButton.querySelector("b").textContent = text;
@@ -1609,6 +1611,7 @@ ${overwriteMap.value}
                         setPreviewButton(true, "Edit");
                     },
                     error: function() {
+                        previewOn = false;
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
                         setPreviewButton(true, "Preview");
                     }
