@@ -13,7 +13,6 @@
 
     var theme: string;
     var lastSymmetry: number;
-    var previewElement: HTMLDivElement;
 
     enum Pages {
         All = "https://awbw.amarriner.com",
@@ -1531,25 +1530,50 @@ ${overwriteMap.value}
     {
         let saveButton: HTMLElement = Object.values(document.getElementsByClassName("norm")).filter(e => e.textContent.includes("Save"))[0] as HTMLElement;
         let previewButtonElement: HTMLTableCellElement = document.createElement("td");
+        let previewOn: boolean = false;
+        let previewButtonDisabled: boolean = false;
 
-        previewButtonElement.innerHTML = `<a class="norm2" href="#" style="display:block; height: 100%; cursor: default;">
+        previewButtonElement.innerHTML = `<a class="norm2" id="preview_button" href="#" style="display:block; height: 100%;">
 <span class="small_text" style="line-height:29px; display: block; vertical-align: middle;" title="Toggle Preview Mode">
 <img style="vertical-align: middle;" src="terrain/editmap.gif">
 <b style="vertical-align:middle;">Preview</b>
-<input type="checkbox" id="preview_checkbox" style="vertical-align: middle; cursor: pointer;">
 </span></a>`;
         previewButtonElement.setAttribute("class", "norm");
         previewButtonElement.setAttribute("style", "border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;");
         previewButtonElement.setAttribute("height", "30");
         saveButton.parentElement.appendChild(previewButtonElement);
 
-        let previewCheckbox: HTMLInputElement = document.getElementById("preview_checkbox") as HTMLInputElement;
+        let previewButton: HTMLAnchorElement = document.getElementById("preview_button") as HTMLAnchorElement;
 
-        function previewCheckboxToggled(e: Event)
+        function setPreviewButton(enabled: boolean, text: string)
         {
-            if(previewCheckbox.checked)
+            if(enabled)
             {
-                previewCheckbox.disabled = true;
+                previewButtonDisabled = false;
+                previewButton.style.backgroundColor = "white";
+            }
+            else
+            {
+                previewButtonDisabled = true;
+                previewButton.style.backgroundColor = "silver";
+            }
+
+            previewButton.querySelector("b").textContent = text;
+        }
+
+        function previewToggled(e: Event)
+        {
+            if(previewButtonDisabled)
+            {
+                return;
+            }
+
+            var previewElement: HTMLDivElement;
+            previewOn = !previewOn;
+
+            if(previewOn)
+            {
+                setPreviewButton(false, "Preview");
                 let mapLink: string = (document.getElementById("design-map-name").childNodes[0] as HTMLAnchorElement).href;
                 mapLink = mapLink.replace("editmap.php", "prevmaps.php");
 
@@ -1582,16 +1606,17 @@ ${overwriteMap.value}
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
-                        previewCheckbox.disabled = false;
+                        setPreviewButton(true, "Edit");
                     },
                     error: function() {
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
-                        previewCheckbox.disabled = false;
+                        setPreviewButton(true, "Preview");
                     }
                 });
             }
             else
             {
+                setPreviewButton(true, "Preview");
                 let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
                 let gamemap: HTMLElement = document.getElementById("gamemap");
                 gamemapContainer.removeChild(previewElement);
@@ -1599,7 +1624,7 @@ ${overwriteMap.value}
             }
         }
 
-        previewCheckbox.onchange = previewCheckboxToggled;
+        previewButton.onclick = previewToggled;
     }
 
     function fixCacheScript()
