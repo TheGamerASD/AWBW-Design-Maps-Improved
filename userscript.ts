@@ -1552,13 +1552,13 @@ ${overwriteMap.value}
             {
                 previewButtonDisabled = false;
                 previewButton.parentElement.style.removeProperty("background-color");
-                previewButton.parentElement.style.cursor = "default";
+                previewButton.style.cursor = "pointer";
             }
             else
             {
                 previewButtonDisabled = true;
                 previewButton.parentElement.style.backgroundColor = "silver";
-                previewButton.parentElement.style.cursor = "pointer";
+                previewButton.style.cursor = "default";
             }
 
             previewButton.querySelector("b").textContent = text;
@@ -1606,8 +1606,8 @@ ${overwriteMap.value}
                         previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%; pointer-events: none;`);
                         let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
                         mapBackground.src = mapBackground.src += "?" + Date.now();
-                        gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
+                        gamemap.style.display = "none";
                         setPreviewButton(true, "Edit");
                     },
                     error: function() {
@@ -1622,8 +1622,8 @@ ${overwriteMap.value}
                 setPreviewButton(true, "Preview");
                 let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
                 let gamemap: HTMLElement = document.getElementById("gamemap");
-                gamemapContainer.removeChild(previewElement);
                 gamemap.style.removeProperty("display");
+                gamemapContainer.removeChild(previewElement);
             }
         }
 
