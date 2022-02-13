@@ -43,12 +43,10 @@
         public static runModules() {
             for (let module of this.modules) {
                 if (window.location.href.startsWith(module.page)) {
-                    try
-                    {
+                    try {
                         module.func();
                     }
-                    catch (error)
-                    {
+                    catch (error) {
                         console.log(error);
                     }
                 }
@@ -57,8 +55,7 @@
     }
 
     function setGlobalVariables() {
-        if(window.location.href.startsWith(Pages.MapEditor))
-        {
+        if (window.location.href.startsWith(Pages.MapEditor)) {
             theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
             lastSymmetry = 0;
         }
@@ -1527,8 +1524,7 @@ ${overwriteMap.value}
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)")
     }
 
-    function previewScript()
-    {
+    function previewScript() {
         let saveButton: HTMLElement = Object.values(document.getElementsByClassName("norm")).filter(e => e.textContent.includes("Save"))[0] as HTMLElement;
         let previewButtonElement: HTMLTableCellElement = document.createElement("td");
         let previewOn: boolean = false;
@@ -1546,16 +1542,13 @@ ${overwriteMap.value}
 
         let previewButton: HTMLAnchorElement = document.getElementById("preview_button") as HTMLAnchorElement;
 
-        function setPreviewButton(enabled: boolean, text: string)
-        {
-            if(enabled)
-            {
+        function setPreviewButton(enabled: boolean, text: string) {
+            if (enabled) {
                 previewButtonDisabled = false;
                 previewButton.parentElement.style.removeProperty("background-color");
                 previewButton.style.cursor = "pointer";
             }
-            else
-            {
+            else {
                 previewButtonDisabled = true;
                 previewButton.parentElement.style.backgroundColor = "silver";
                 previewButton.style.cursor = "default";
@@ -1564,61 +1557,83 @@ ${overwriteMap.value}
             previewButton.querySelector("b").textContent = text;
         }
 
-        function previewToggled(e: Event)
-        {
-            if(previewButtonDisabled)
-            {
+        function previewToggled(e: Event) {
+            if (previewButtonDisabled) {
                 return;
             }
 
             previewOn = !previewOn;
 
-            if(previewOn)
-            {
+            if (previewOn) {
                 setPreviewButton(false, "Preview");
                 let mapLink: string = (document.getElementById("design-map-name").childNodes[0] as HTMLAnchorElement).href;
                 mapLink = mapLink.replace("editmap.php", "prevmaps.php");
 
                 let autosaveCheckbox = document.getElementById("autosave_checkbox") as HTMLInputElement;
 
-                if(autosaveCheckbox.checked)
-                {
+                if (autosaveCheckbox.checked) {
                     $.ajax({
                         method: "POST",
                         url: "updatemap.php",
                         contentType: "application/x-www-form-urlencoded",
                         data: $('#map_form').serialize()
+                    }).then(() => {
+                        $.ajax({
+                            method: "GET",
+                            url: mapLink,
+                            contentType: "text/html; charset=UTF-8",
+                            cache: false,
+                            success: function (data: string) {
+                                let doc: Document = new DOMParser().parseFromString(data, "text/html");
+                                let html: string = doc.getElementById("gamemap").innerHTML;
+                                let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
+                                let gamemap: HTMLElement = document.getElementById("gamemap");
+                                previewElement = document.createElement("div");
+                                previewElement.innerHTML = html;
+                                previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%; pointer-events: none;`);
+                                let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
+                                mapBackground.src = mapBackground.src += "?" + Date.now();
+                                gamemapContainer.appendChild(previewElement);
+                                gamemap.style.display = "none";
+                                setPreviewButton(true, "Edit");
+                            },
+                            error: function () {
+                                previewOn = false;
+                                alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                                setPreviewButton(true, "Preview");
+                            }
+                        });
+                    })
+                }
+                else {
+                    $.ajax({
+                        method: "GET",
+                        url: mapLink,
+                        contentType: "text/html; charset=UTF-8",
+                        cache: false,
+                        success: function (data: string) {
+                            let doc: Document = new DOMParser().parseFromString(data, "text/html");
+                            let html: string = doc.getElementById("gamemap").innerHTML;
+                            let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
+                            let gamemap: HTMLElement = document.getElementById("gamemap");
+                            previewElement = document.createElement("div");
+                            previewElement.innerHTML = html;
+                            previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%; pointer-events: none;`);
+                            let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
+                            mapBackground.src = mapBackground.src += "?" + Date.now();
+                            gamemapContainer.appendChild(previewElement);
+                            gamemap.style.display = "none";
+                            setPreviewButton(true, "Edit");
+                        },
+                        error: function () {
+                            previewOn = false;
+                            alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                            setPreviewButton(true, "Preview");
+                        }
                     });
                 }
-
-                $.ajax({
-                    method: "GET",
-                    url: mapLink,
-                    contentType: "text/html; charset=UTF-8",
-                    cache: false,
-                    success: function(data: string) {
-                        let doc: Document = new DOMParser().parseFromString(data, "text/html");
-                        let html: string = doc.getElementById("gamemap").innerHTML;
-                        let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
-                        let gamemap: HTMLElement = document.getElementById("gamemap");
-                        previewElement = document.createElement("div");
-                        previewElement.innerHTML = html;
-                        previewElement.setAttribute("style", `scale: ${localStorage.getItem("scale")}; height: 0.5%; pointer-events: none;`);
-                        let mapBackground: HTMLImageElement = Object.values(previewElement.childNodes).find(c => (c as HTMLElement).id === "map-background") as HTMLImageElement;
-                        mapBackground.src = mapBackground.src += "?" + Date.now();
-                        gamemapContainer.appendChild(previewElement);
-                        gamemap.style.display = "none";
-                        setPreviewButton(true, "Edit");
-                    },
-                    error: function() {
-                        previewOn = false;
-                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
-                        setPreviewButton(true, "Preview");
-                    }
-                });
             }
-            else
-            {
+            else {
                 setPreviewButton(true, "Preview");
                 let gamemapContainer: HTMLElement = document.getElementById("gamemap-container");
                 let gamemap: HTMLElement = document.getElementById("gamemap");
@@ -1630,8 +1645,7 @@ ${overwriteMap.value}
         previewButton.onclick = previewToggled;
     }
 
-    function fixCacheScript()
-    {
+    function fixCacheScript() {
         let mapBackground: HTMLImageElement = document.getElementById("map-background") as HTMLImageElement;
         mapBackground.src = mapBackground.src + "?" + Date.now();
     }
