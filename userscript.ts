@@ -13,6 +13,7 @@
 
     var theme: string;
     var lastSymmetry: number;
+    var previewElement: HTMLDivElement;
 
     enum Pages {
         All = "https://awbw.amarriner.com",
@@ -1550,12 +1551,12 @@ ${overwriteMap.value}
             if(enabled)
             {
                 previewButtonDisabled = false;
-                previewButton.style.backgroundColor = "white";
+                previewButton.parentElement.style.backgroundColor = "white";
             }
             else
             {
                 previewButtonDisabled = true;
-                previewButton.style.backgroundColor = "silver";
+                previewButton.parentElement.style.backgroundColor = "silver";
             }
 
             previewButton.querySelector("b").textContent = text;
@@ -1568,7 +1569,6 @@ ${overwriteMap.value}
                 return;
             }
 
-            var previewElement: HTMLDivElement;
             previewOn = !previewOn;
 
             if(previewOn)
