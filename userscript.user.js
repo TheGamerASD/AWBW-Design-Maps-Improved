@@ -680,8 +680,8 @@
             previewOn = !previewOn;
             if (previewOn) {
                 setPreviewButton(false, "Preview");
-                var mapLink = document.getElementById("design-map-name").childNodes[0].href;
-                mapLink = mapLink.replace("editmap.php", "prevmaps.php");
+                var mapLink_1 = document.getElementById("design-map-name").childNodes[0].href;
+                mapLink_1 = mapLink_1.replace("editmap.php", "prevmaps.php");
                 var autosaveCheckbox = document.getElementById("autosave_checkbox");
                 if (autosaveCheckbox.checked) {
                     $.ajax({
@@ -689,33 +689,61 @@
                         url: "updatemap.php",
                         contentType: "application/x-www-form-urlencoded",
                         data: $('#map_form').serialize()
+                    }).then(function () {
+                        $.ajax({
+                            method: "GET",
+                            url: mapLink_1,
+                            contentType: "text/html; charset=UTF-8",
+                            cache: false,
+                            success: function (data) {
+                                var doc = new DOMParser().parseFromString(data, "text/html");
+                                var html = doc.getElementById("gamemap").innerHTML;
+                                var gamemapContainer = document.getElementById("gamemap-container");
+                                var gamemap = document.getElementById("gamemap");
+                                previewElement = document.createElement("div");
+                                previewElement.innerHTML = html;
+                                previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%; pointer-events: none;"));
+                                var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
+                                mapBackground.src = mapBackground.src += "?" + Date.now();
+                                gamemapContainer.appendChild(previewElement);
+                                gamemap.style.display = "none";
+                                setPreviewButton(true, "Edit");
+                            },
+                            error: function () {
+                                previewOn = false;
+                                alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                                setPreviewButton(true, "Preview");
+                            }
+                        });
                     });
                 }
-                $.ajax({
-                    method: "GET",
-                    url: mapLink,
-                    contentType: "text/html; charset=UTF-8",
-                    cache: false,
-                    success: function (data) {
-                        var doc = new DOMParser().parseFromString(data, "text/html");
-                        var html = doc.getElementById("gamemap").innerHTML;
-                        var gamemapContainer = document.getElementById("gamemap-container");
-                        var gamemap = document.getElementById("gamemap");
-                        previewElement = document.createElement("div");
-                        previewElement.innerHTML = html;
-                        previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%; pointer-events: none;"));
-                        var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
-                        mapBackground.src = mapBackground.src += "?" + Date.now();
-                        gamemapContainer.appendChild(previewElement);
-                        gamemap.style.display = "none";
-                        setPreviewButton(true, "Edit");
-                    },
-                    error: function () {
-                        previewOn = false;
-                        alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
-                        setPreviewButton(true, "Preview");
-                    }
-                });
+                else {
+                    $.ajax({
+                        method: "GET",
+                        url: mapLink_1,
+                        contentType: "text/html; charset=UTF-8",
+                        cache: false,
+                        success: function (data) {
+                            var doc = new DOMParser().parseFromString(data, "text/html");
+                            var html = doc.getElementById("gamemap").innerHTML;
+                            var gamemapContainer = document.getElementById("gamemap-container");
+                            var gamemap = document.getElementById("gamemap");
+                            previewElement = document.createElement("div");
+                            previewElement.innerHTML = html;
+                            previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%; pointer-events: none;"));
+                            var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
+                            mapBackground.src = mapBackground.src += "?" + Date.now();
+                            gamemapContainer.appendChild(previewElement);
+                            gamemap.style.display = "none";
+                            setPreviewButton(true, "Edit");
+                        },
+                        error: function () {
+                            previewOn = false;
+                            alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                            setPreviewButton(true, "Preview");
+                        }
+                    });
+                }
             }
             else {
                 setPreviewButton(true, "Preview");
