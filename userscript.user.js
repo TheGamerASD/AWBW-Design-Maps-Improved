@@ -11,6 +11,7 @@
     'use strict';
     var theme;
     var lastSymmetry;
+    var previewElement;
     var Pages;
     (function (Pages) {
         Pages["All"] = "https://awbw.amarriner.com";
@@ -662,11 +663,11 @@
         function setPreviewButton(enabled, text) {
             if (enabled) {
                 previewButtonDisabled = false;
-                previewButton.style.backgroundColor = "white";
+                previewButton.parentElement.style.backgroundColor = "white";
             }
             else {
                 previewButtonDisabled = true;
-                previewButton.style.backgroundColor = "silver";
+                previewButton.parentElement.style.backgroundColor = "silver";
             }
             previewButton.querySelector("b").textContent = text;
         }
@@ -674,7 +675,6 @@
             if (previewButtonDisabled) {
                 return;
             }
-            var previewElement;
             previewOn = !previewOn;
             if (previewOn) {
                 setPreviewButton(false, "Preview");
