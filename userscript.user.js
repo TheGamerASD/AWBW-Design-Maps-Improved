@@ -11,7 +11,6 @@
     'use strict';
     var theme;
     var lastSymmetry;
-    var previewElement;
     var Pages;
     (function (Pages) {
         Pages["All"] = "https://awbw.amarriner.com";
@@ -652,15 +651,33 @@
     function previewScript() {
         var saveButton = Object.values(document.getElementsByClassName("norm")).filter(function (e) { return e.textContent.includes("Save"); })[0];
         var previewButtonElement = document.createElement("td");
-        previewButtonElement.innerHTML = "<a class=\"norm2\" href=\"#\" style=\"display:block; height: 100%; cursor: default;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n<input type=\"checkbox\" id=\"preview_checkbox\" style=\"vertical-align: middle; cursor: pointer;\">\n</span></a>";
+        var previewOn = false;
+        var previewButtonDisabled = false;
+        previewButtonElement.innerHTML = "<a class=\"norm2\" id=\"preview_button\" href=\"#\" style=\"display:block; height: 100%;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n</span></a>";
         previewButtonElement.setAttribute("class", "norm");
         previewButtonElement.setAttribute("style", "border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;");
         previewButtonElement.setAttribute("height", "30");
         saveButton.parentElement.appendChild(previewButtonElement);
-        var previewCheckbox = document.getElementById("preview_checkbox");
-        function previewCheckboxToggled(e) {
-            if (previewCheckbox.checked) {
-                previewCheckbox.disabled = true;
+        var previewButton = document.getElementById("preview_button");
+        function setPreviewButton(enabled, text) {
+            if (enabled) {
+                previewButtonDisabled = false;
+                previewButton.style.backgroundColor = "white";
+            }
+            else {
+                previewButtonDisabled = true;
+                previewButton.style.backgroundColor = "silver";
+            }
+            previewButton.querySelector("b").textContent = text;
+        }
+        function previewToggled(e) {
+            if (previewButtonDisabled) {
+                return;
+            }
+            var previewElement;
+            previewOn = !previewOn;
+            if (previewOn) {
+                setPreviewButton(false, "Preview");
                 var mapLink = document.getElementById("design-map-name").childNodes[0].href;
                 mapLink = mapLink.replace("editmap.php", "prevmaps.php");
                 var autosaveCheckbox = document.getElementById("autosave_checkbox");
@@ -689,22 +706,23 @@
                         mapBackground.src = mapBackground.src += "?" + Date.now();
                         gamemap.style.display = "none";
                         gamemapContainer.appendChild(previewElement);
-                        previewCheckbox.disabled = false;
+                        setPreviewButton(true, "Edit");
                     },
                     error: function () {
                         alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
-                        previewCheckbox.disabled = false;
+                        setPreviewButton(true, "Preview");
                     }
                 });
             }
             else {
+                setPreviewButton(true, "Preview");
                 var gamemapContainer = document.getElementById("gamemap-container");
                 var gamemap = document.getElementById("gamemap");
                 gamemapContainer.removeChild(previewElement);
                 gamemap.style.removeProperty("display");
             }
         }
-        previewCheckbox.onchange = previewCheckboxToggled;
+        previewButton.onclick = previewToggled;
     }
     function fixCacheScript() {
         var mapBackground = document.getElementById("map-background");
