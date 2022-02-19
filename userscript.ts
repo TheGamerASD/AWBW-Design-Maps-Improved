@@ -54,6 +54,18 @@
         }
     }
 
+    abstract class Utils {
+        public static trimCharEnd(string: string, char: string) {
+            let start: number = 0;
+            let end: number = string.length;
+
+            while (end > start && string[end - 1] === char)
+                --end;
+
+            return (start > 0 || end < string.length) ? string.substring(start, end) : string;
+        }
+    }
+
     function setGlobalVariables() {
         if (window.location.href.startsWith(Pages.MapEditor)) {
             theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
@@ -1650,6 +1662,250 @@ ${overwriteMap.value}
         mapBackground.src = mapBackground.src + "?" + Date.now();
     }
 
+    function mapResizeScript() {
+        let main: HTMLElement = document.getElementById("main");
+        let tables: HTMLElement[] = Object.values(main.children).filter(e => (e as HTMLElement).style.width === "900px") as HTMLElement[];
+        let tableRows: HTMLTableRowElement[] = tables.map(t => t.children[0].children[1].children[0].children[0].children[0].children[1].children[0].children[0].children[0].children[0]) as HTMLTableRowElement[];
+        let mapNames: { [key: string]: string } = {};
+
+        tableRows.forEach(tr => {
+            let mapPreviewButton: HTMLElement = document.createElement("td");
+
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.setAttribute("style", "text-align:left; padding-left: 4px; padding-bottom: 3px;");
+            mapPreviewButton.setAttribute("width", "125");
+            mapPreviewButton.setAttribute("height", "35");
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.innerHTML = `<span class="small_text" title="Resize this design map">
+<a class="norm2" style="display:block;color: #000000;text-decoration: none;font-weight: normal;cursor: pointer;">
+<img style="vertical-align:middle;" src="terrain/zoomin.gif">
+<b style="padding-right: 3px; vertical-align:middle;">Resize Map</b>
+</a></span>`;
+
+            tr.appendChild(mapPreviewButton);
+            let mapID: string = (mapPreviewButton.parentElement.children[0].children[0].children[0] as HTMLAnchorElement).href.match(/(?<=https:\/\/awbw\.amarriner\.com\/editmap\.php\?maps_id=)\d+/)[0];
+            mapNames[mapID] = tr.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[0].children[0].children[1].children[0].textContent;
+            mapPreviewButton.setAttribute("mapid", mapID);
+            mapPreviewButton.querySelector("a").onclick = () => onResizeMapClick(mapID, mapNames);
+        });
+
+        function onResizeMapClick(mapID: string, mapNames: { [key: string]: string }) {
+            let resizePrompt: HTMLElement = document.createElement("div");
+            resizePrompt.setAttribute("style", "position: fixed; left: 50vw; top: 50vh; margin-top: -7%; margin-left: -8%; z-index: 1;");
+            resizePrompt.setAttribute("id", "resize_prompt");
+            resizePrompt.innerHTML = `<table cellspacing="0" cellpadding="0"><tbody><tr>
+<td class="bordertitle" height="20"><b>Resize Map</b></td></tr><tr>
+<td class="borderwhite" style="padding-top: 3px;">
+<form name="" style="padding-left: 2px; padding-right: 2px; margin-bottom: 5px;">
+<table cellspacing="1" cellpadding="2"><tbody><tr><td><b>X Axis:</b></td></tr><tr><td>
+<select class="select_left">
+<option value="Expand">Expand</option>
+<option value="Shrink">Shrink</option></select></td>
+<td>left by</td><td>
+<input class="text input_left" min="0" max="10" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
+<td>tile(s)</td></tr>
+<tr><td>
+<select class="select_right">
+<option value="Expand">Expand</option>
+<option value="Shrink">Shrink</option></select></td>
+<td>right by</td><td>
+<input class="text input_right" min="0" max="10" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
+<td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class="select_top">
+<option value="Expand">Expand</option>
+<option value="Shrink">Shrink</option></select></td><td>top by</td><td>
+<input class="text input_top" min="0" max="10" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
+<td>tile(s)</td></tr>
+<tr><td><select class="select_bottom">
+<option value="Expand">Expand</option>
+<option value="Shrink">Shrink</option></select></td><td>bottom by</td><td>
+<input class="text input_bottom" min="0" max="10" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
+<td>tile(s)</td></tr>
+<tr>
+<td style=""><input style="margin-top: 5px;width: 50px;" class="submit" type="button" value="Resize"></td></tr><tr>
+<td style=""><input style="margin-top: 5px;width: 50px;" class="submit" type="button" value="Cancel"></td></tr>
+</tbody></tbody></table></form></td></tr></tbody></table>`;
+            document.getElementById("main").appendChild(resizePrompt);
+
+            (resizePrompt.getElementsByClassName("submit")[0] as HTMLElement).onclick = () => onResize(mapID, mapNames);
+            (resizePrompt.getElementsByClassName("submit")[1] as HTMLElement).onclick = onResizeCancel;
+
+            let darkFilter: HTMLElement = document.createElement("div");
+            darkFilter.setAttribute("style", "width: 100vw;height: 100vh;background-color: #00000050;position: fixed;top: 0vh;left: 0vw;");
+            darkFilter.setAttribute("id", "dark_filter");
+            document.getElementById("main").appendChild(darkFilter);
+        }
+
+        function onResize(mapID: string, mapNames: { [key: string]: string }) {
+            let resizePrompt: HTMLElement = document.getElementById("resize_prompt");
+
+            if (!confirm(`Are you sure you want to resize "${mapNames[mapID]}"? Resizing a map will remove all predeployed units from it.`)) {
+                resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+                document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+                return;
+            }
+
+            let topInput: HTMLInputElement = resizePrompt.getElementsByClassName("input_top")[0] as HTMLInputElement;
+            let bottomInput: HTMLInputElement = resizePrompt.getElementsByClassName("input_bottom")[0] as HTMLInputElement;
+            let leftInput: HTMLInputElement = resizePrompt.getElementsByClassName("input_left")[0] as HTMLInputElement;
+            let rightInput: HTMLInputElement = resizePrompt.getElementsByClassName("input_right")[0] as HTMLInputElement;
+
+            if (!topInput.validity.valid || !bottomInput.validity.valid || !leftInput.validity.valid || !rightInput.validity.valid) {
+                topInput.reportValidity();
+                bottomInput.reportValidity();
+                leftInput.reportValidity();
+                rightInput.reportValidity();
+                return;
+            }
+
+            resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+
+            let top: number = parseInt(topInput.value);
+            let bottom: number = parseInt(bottomInput.value);
+            let left: number = parseInt(leftInput.value);
+            let right: number = parseInt(rightInput.value);
+
+            let topExpand: boolean = (resizePrompt.getElementsByClassName("select_top")[0] as HTMLSelectElement).value === "Expand";
+            let bottomExpand: boolean = (resizePrompt.getElementsByClassName("select_bottom")[0] as HTMLSelectElement).value === "Expand";
+            let leftExpand: boolean = (resizePrompt.getElementsByClassName("select_left")[0] as HTMLSelectElement).value === "Expand";
+            let rightExpand: boolean = (resizePrompt.getElementsByClassName("select_right")[0] as HTMLSelectElement).value === "Expand";
+
+            function resizeMap(mapData: string): string {
+                let mapLines: string[] = mapData.split('\n').map(l => Utils.trimCharEnd(l, '\n'));
+
+                let mapWidth: number = mapLines[0].split(',').length;
+                let mapHeight: number = mapLines.length;
+                let tile: string = "28,";
+                let tileRaw: string = "28";
+
+                function getChange(change: number, mode: boolean) {
+                    if (mode) return change;
+                    else return -change;
+                }
+
+                let newHeight: number = mapHeight + getChange(top, topExpand) + getChange(bottom, bottomExpand);
+                let newWidth: number = mapWidth + getChange(left, leftExpand) + getChange(right, rightExpand);
+
+                if (newHeight > 36 || newHeight < 5 || newWidth > 36 || newWidth < 5) {
+                    return "";
+                }
+
+                let index: number = 0;
+                mapLines.forEach(mapLine => {
+                    let lineArray: string[] = mapLine.split(',');
+
+                    if (leftExpand) {
+                        for (let i = 0; i < left; i++) {
+                            lineArray.unshift(tileRaw);
+                        }
+                    }
+                    else {
+                        lineArray = lineArray.slice(left);
+                    }
+
+                    if (rightExpand) {
+                        for (let i = 0; i < right; i++) {
+                            lineArray.push(tileRaw);
+                        }
+                    }
+                    else {
+                        lineArray = lineArray.slice(0, lineArray.length - right);
+                    }
+
+                    mapLines[index] = Utils.trimCharEnd(lineArray.join(','), ',');
+
+                    index++;
+                });
+
+                if (top != 0) {
+                    if (topExpand) {
+                        for (let i = 0; i < top; i++) {
+                            mapLines.unshift(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(top);
+                    }
+                }
+
+                if (bottom != 0) {
+                    if (bottomExpand) {
+                        for (let i = 0; i < bottom; i++) {
+                            mapLines.push(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(0, mapLines.length - bottom);
+                    }
+                }
+
+                return mapLines.join('\n');
+            }
+
+            $.ajax({
+                method: "GET",
+                url: `https://awbw.amarriner.com/text_map.php?maps_id=${mapID}`,
+                contentType: "text/html; charset=UTF-8",
+                cache: false,
+                success: function (data: string) {
+                    let doc: Document = new DOMParser().parseFromString(data, "text/html");
+                    let mapData: string = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
+                    console.log(mapData);
+                    let resizedMapData: string = resizeMap(mapData);
+
+                    if (resizedMapData === "") {
+                        alert("Resize canceled. Resizing map would give it an invalid size.");
+                        return;
+                    }
+
+                    fetch("/uploadmap.php",
+                        {
+                            method: "POST",
+
+                            body: `-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="action"
+
+UPLOAD
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="mapfile"; filename="data.txt"
+Content-Type: text/plain
+
+${resizedMapData}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="name"
+
+${mapNames[mapID]}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="format"
+
+AWBW
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="overwrite"
+
+${mapID}
+-----------------------------216783749517670898471830319234--`,
+                            headers:
+                            {
+                                "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                            }
+                        }).then(() => {
+                            window.location.href = `https://awbw.amarriner.com/design.php#map_${mapID}`;
+                            let mapPreview: HTMLImageElement = Object.values(document.querySelectorAll("img")).find(i => i.src === `https://awbw.amarriner.com/smallmaps/${mapID}.png`) as HTMLImageElement;
+                            mapPreview.src = mapPreview.src + "?" + Date.now();
+                        });
+                },
+                error: function () {
+                    alert("An error has occurred. Please make sure you are connected to the internet.");
+                }
+            });
+        }
+
+        function onResizeCancel() {
+            document.getElementById("resize_prompt").parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+        }
+    }
+
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -1661,6 +1917,7 @@ ${overwriteMap.value}
     ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
     ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
+    ModuleManager.registerModule(mapResizeScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
     ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
 
