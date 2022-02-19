@@ -4,33 +4,48 @@ This is a Tampermonkey user script for improving the Advance Wars By Web mapmaki
 1. Install the Tampermonkey browser extension from [here](https://www.tampermonkey.net/).
 2. Click [here](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/raw/main/release.user.js) to install the userscript. A window will appear asking you if you want to install the userscript. Click 'Install' to install it. If you already have the script installed and want to update it to the latest version, click the link and press the 'Update' button.
 ## Features:
-* Autosave
+### Autosave
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/autosave.png)
-* Info Panel
+
+Turn on autosave by using the checkbox. When turned on, autosave will save every 20 seconds or whenever you leave the map editor page.
+### Info Panel
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/infopanel.png)
-* Refreshless Saving
+
+The info panel appears below the map and shows information about the map in the map editor.
+### Refreshless Saving
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asyncsave.png)
-* Improved UI
+
+Clicking the save button will no longer refresh the page.
+### Improved UI
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/improvedui.png)
-* Fixed Tile Clicks (Tall tiles like HQs no longer block clicks on other tiles)
+
+The UI has been improved to make it easier to select tiles and units when making maps.
+### Fixed Tile Clicks
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/clickthrough.png)
-* Asymmetry Detector
+
+Tiles like HQs and bases will no longer block clicks on the tile above them.
+### Asymmetry Detector
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asymmetrydetector.png)
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asymmetrydetector2.png)
-* Improved Create Map Form
+
+You will be shown if your map contains any asymmetries with the currently select symmetry option.
+### Improved Create Map Form
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/createmapform.png)
-* Fileless Upload Map **(v1.1)**
+
+The create map form has been improved to make it easier to create a map.
+### Fileless Upload Map
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/uploadmap.png)
 
-* Hotkeys **(v1.1)**
+You can now upload maps without having to upload a file.
+### Hotkeys
   - Hold **A** to open terrain menu
   - Hold **S** to open buildings menu
   - Hold **D** to open unit menu
