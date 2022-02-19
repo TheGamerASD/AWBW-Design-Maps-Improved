@@ -49,6 +49,18 @@
         ModuleManager.modules = [];
         return ModuleManager;
     }());
+    var Utils = /** @class */ (function () {
+        function Utils() {
+        }
+        Utils.trimCharEnd = function (string, char) {
+            var start = 0;
+            var end = string.length;
+            while (end > start && string[end - 1] === char)
+                --end;
+            return (start > 0 || end < string.length) ? string.substring(start, end) : string;
+        };
+        return Utils;
+    }());
     function setGlobalVariables() {
         if (window.location.href.startsWith(Pages.MapEditor)) {
             theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
@@ -759,6 +771,163 @@
         var mapBackground = document.getElementById("map-background");
         mapBackground.src = mapBackground.src + "?" + Date.now();
     }
+    function mapResizeScript() {
+        var main = document.getElementById("main");
+        var tables = Object.values(main.children).filter(function (e) { return e.style.width === "900px"; });
+        var tableRows = tables.map(function (t) { return t.children[0].children[1].children[0].children[0].children[0].children[1].children[0].children[0].children[0].children[0]; });
+        var mapNames = {};
+        tableRows.forEach(function (tr) {
+            var mapPreviewButton = document.createElement("td");
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.setAttribute("style", "text-align:left; padding-left: 4px; padding-bottom: 3px;");
+            mapPreviewButton.setAttribute("width", "125");
+            mapPreviewButton.setAttribute("height", "35");
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.innerHTML = "<span class=\"small_text\" title=\"Resize this design map\">\n<a class=\"norm2\" style=\"display:block;color: #000000;text-decoration: none;font-weight: normal;cursor: pointer;\">\n<img style=\"vertical-align:middle;\" src=\"terrain/zoomin.gif\">\n<b style=\"padding-right: 3px; vertical-align:middle;\">Resize Map</b>\n</a></span>";
+            tr.appendChild(mapPreviewButton);
+            var mapID = mapPreviewButton.parentElement.children[0].children[0].children[0].href.match(/(?<=https:\/\/awbw\.amarriner\.com\/editmap\.php\?maps_id=)\d+/)[0];
+            mapNames[mapID] = tr.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[0].children[0].children[1].children[0].textContent;
+            mapPreviewButton.setAttribute("mapid", mapID);
+            mapPreviewButton.querySelector("a").onclick = function () { return onResizeMapClick(mapID, mapNames); };
+        });
+        function onResizeMapClick(mapID, mapNames) {
+            var resizePrompt = document.createElement("div");
+            resizePrompt.setAttribute("style", "position: fixed; left: 50vw; top: 50vh; margin-top: -7%; margin-left: -8%; z-index: 1;");
+            resizePrompt.setAttribute("id", "resize_prompt");
+            resizePrompt.innerHTML = "<table cellspacing=\"0\" cellpadding=\"0\"><tbody><tr>\n<td class=\"bordertitle\" height=\"20\"><b>Resize Map</b></td></tr><tr>\n<td class=\"borderwhite\" style=\"padding-top: 3px;\">\n<form name=\"\" style=\"padding-left: 2px; padding-right: 2px; margin-bottom: 5px;\">\n<table cellspacing=\"1\" cellpadding=\"2\"><tbody><tr><td><b>X Axis:</b></td></tr><tr><td>\n<select class=\"select_left\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>left by</td><td>\n<input class=\"text input_left\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td>\n<select class=\"select_right\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>right by</td><td>\n<input class=\"text input_right\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class=\"select_top\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>top by</td><td>\n<input class=\"text input_top\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td><select class=\"select_bottom\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>bottom by</td><td>\n<input class=\"text input_bottom\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Resize\"></td></tr><tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Cancel\"></td></tr>\n</tbody></tbody></table></form></td></tr></tbody></table>";
+            document.getElementById("main").appendChild(resizePrompt);
+            resizePrompt.getElementsByClassName("submit")[0].onclick = function () { return onResize(mapID, mapNames); };
+            resizePrompt.getElementsByClassName("submit")[1].onclick = onResizeCancel;
+            var darkFilter = document.createElement("div");
+            darkFilter.setAttribute("style", "width: 100vw;height: 100vh;background-color: #00000050;position: fixed;top: 0vh;left: 0vw;");
+            darkFilter.setAttribute("id", "dark_filter");
+            document.getElementById("main").appendChild(darkFilter);
+        }
+        function onResize(mapID, mapNames) {
+            var resizePrompt = document.getElementById("resize_prompt");
+            if (!confirm("Are you sure you want to resize \"".concat(mapNames[mapID], "\"? Resizing a map will remove all predeployed units from it."))) {
+                resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+                document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+                return;
+            }
+            var topInput = resizePrompt.getElementsByClassName("input_top")[0];
+            var bottomInput = resizePrompt.getElementsByClassName("input_bottom")[0];
+            var leftInput = resizePrompt.getElementsByClassName("input_left")[0];
+            var rightInput = resizePrompt.getElementsByClassName("input_right")[0];
+            if (!topInput.validity.valid || !bottomInput.validity.valid || !leftInput.validity.valid || !rightInput.validity.valid) {
+                topInput.reportValidity();
+                bottomInput.reportValidity();
+                leftInput.reportValidity();
+                rightInput.reportValidity();
+                return;
+            }
+            resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+            var top = parseInt(topInput.value);
+            var bottom = parseInt(bottomInput.value);
+            var left = parseInt(leftInput.value);
+            var right = parseInt(rightInput.value);
+            var topExpand = resizePrompt.getElementsByClassName("select_top")[0].value === "Expand";
+            var bottomExpand = resizePrompt.getElementsByClassName("select_bottom")[0].value === "Expand";
+            var leftExpand = resizePrompt.getElementsByClassName("select_left")[0].value === "Expand";
+            var rightExpand = resizePrompt.getElementsByClassName("select_right")[0].value === "Expand";
+            function resizeMap(mapData) {
+                var mapLines = mapData.split('\n').map(function (l) { return Utils.trimCharEnd(l, '\n'); });
+                var mapWidth = mapLines[0].split(',').length;
+                var mapHeight = mapLines.length;
+                var tile = "28,";
+                var tileRaw = "28";
+                function getChange(change, mode) {
+                    if (mode)
+                        return change;
+                    else
+                        return -change;
+                }
+                var newHeight = mapHeight + getChange(top, topExpand) + getChange(bottom, bottomExpand);
+                var newWidth = mapWidth + getChange(left, leftExpand) + getChange(right, rightExpand);
+                if (newHeight > 36 || newHeight < 5 || newWidth > 36 || newWidth < 5) {
+                    return "";
+                }
+                var index = 0;
+                mapLines.forEach(function (mapLine) {
+                    var lineArray = mapLine.split(',');
+                    if (leftExpand) {
+                        for (var i = 0; i < left; i++) {
+                            lineArray.unshift(tileRaw);
+                        }
+                    }
+                    else {
+                        lineArray = lineArray.slice(left);
+                    }
+                    if (rightExpand) {
+                        for (var i = 0; i < right; i++) {
+                            lineArray.push(tileRaw);
+                        }
+                    }
+                    else {
+                        lineArray = lineArray.slice(0, lineArray.length - right);
+                    }
+                    mapLines[index] = Utils.trimCharEnd(lineArray.join(','), ',');
+                    index++;
+                });
+                if (top != 0) {
+                    if (topExpand) {
+                        for (var i = 0; i < top; i++) {
+                            mapLines.unshift(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(top);
+                    }
+                }
+                if (bottom != 0) {
+                    if (bottomExpand) {
+                        for (var i = 0; i < bottom; i++) {
+                            mapLines.push(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(0, mapLines.length - bottom);
+                    }
+                }
+                return mapLines.join('\n');
+            }
+            $.ajax({
+                method: "GET",
+                url: "https://awbw.amarriner.com/text_map.php?maps_id=".concat(mapID),
+                contentType: "text/html; charset=UTF-8",
+                cache: false,
+                success: function (data) {
+                    var doc = new DOMParser().parseFromString(data, "text/html");
+                    var mapData = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
+                    console.log(mapData);
+                    var resizedMapData = resizeMap(mapData);
+                    if (resizedMapData === "") {
+                        alert("Resize canceled. Resizing map would give it an invalid size.");
+                        return;
+                    }
+                    fetch("/uploadmap.php", {
+                        method: "POST",
+                        body: "-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"action\"\n\nUPLOAD\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"mapfile\"; filename=\"data.txt\"\nContent-Type: text/plain\n\n".concat(resizedMapData, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"name\"\n\n").concat(mapNames[mapID], "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"format\"\n\nAWBW\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"overwrite\"\n\n").concat(mapID, "\n-----------------------------216783749517670898471830319234--"),
+                        headers: {
+                            "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                        }
+                    }).then(function () {
+                        window.location.href = "https://awbw.amarriner.com/design.php#map_".concat(mapID);
+                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src === "https://awbw.amarriner.com/smallmaps/".concat(mapID, ".png"); });
+                        mapPreview.src = mapPreview.src + "?" + Date.now();
+                    });
+                },
+                error: function () {
+                    alert("An error has occurred. Please make sure you are connected to the internet.");
+                }
+            });
+        }
+        function onResizeCancel() {
+            document.getElementById("resize_prompt").parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+        }
+    }
     ModuleManager.registerModule(setGlobalVariables, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
@@ -770,6 +939,7 @@
     ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
     ModuleManager.registerModule(previewScript, Pages.MapEditor);
     ModuleManager.registerModule(createMapScript, Pages.YourMaps);
+    ModuleManager.registerModule(mapResizeScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
     ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
     ModuleManager.runModules();
