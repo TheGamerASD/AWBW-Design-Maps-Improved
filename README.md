@@ -34,7 +34,7 @@ Tiles like HQs and bases will no longer block clicks on the tile above them.
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asymmetrydetector.png)
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asymmetrydetector2.png)
 
-You will be shown if your map contains any asymmetries with the currently select symmetry option.
+You will be shown if your map contains any asymmetries with the currently selected symmetry option.
 ### Improved Create Map Form
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/createmapform.png)
