@@ -112,7 +112,7 @@
     }
     function infoPanelScript() {
         'use strict';
-        var gmCont = document.getElementById("gamemap-container");
+        var gmCont = document.getElementById("gamemap");
         function getTiles(name) {
             return (gmCont.innerHTML.match(new RegExp(name, "g")) || []).length.toString();
         }
