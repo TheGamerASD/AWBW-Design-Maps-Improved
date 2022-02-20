@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.1
+// @version      1.2
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/*
@@ -851,21 +851,25 @@
                 var index = 0;
                 mapLines.forEach(function (mapLine) {
                     var lineArray = mapLine.split(',');
-                    if (leftExpand) {
-                        for (var i = 0; i < left; i++) {
-                            lineArray.unshift(tileRaw);
+                    if (left != 0) {
+                        if (leftExpand) {
+                            for (var i = 0; i < left; i++) {
+                                lineArray.unshift(tileRaw);
+                            }
+                        }
+                        else {
+                            lineArray = lineArray.slice(left);
                         }
                     }
-                    else {
-                        lineArray = lineArray.slice(left);
-                    }
-                    if (rightExpand) {
-                        for (var i = 0; i < right; i++) {
-                            lineArray.push(tileRaw);
+                    if (right != 0) {
+                        if (rightExpand) {
+                            for (var i = 0; i < right; i++) {
+                                lineArray.push(tileRaw);
+                            }
                         }
-                    }
-                    else {
-                        lineArray = lineArray.slice(0, lineArray.length - right);
+                        else {
+                            lineArray = lineArray.slice(0, lineArray.length - right);
+                        }
                     }
                     mapLines[index] = Utils.trimCharEnd(lineArray.join(','), ',');
                     index++;
