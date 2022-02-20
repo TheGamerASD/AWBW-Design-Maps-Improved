@@ -1,4 +1,4 @@
-# AWBW Design Maps Improved v1.1
+# AWBW Design Maps Improved v1.2
 This is a Tampermonkey user script for improving the Advance Wars By Web mapmaking experience.
 ## How to install:
 1. Install the Tampermonkey browser extension from [here](https://www.tampermonkey.net/).
@@ -53,6 +53,19 @@ You can now upload maps without having to upload a file.
   - Press **1**-**8** to switch between the first 8 countries
   - Press **Shift**+**1**-**8** to switch between the last 8 countries
   - Press **Ctrl** to toggle symmetry on or off
+
+### Map Preview
+
+![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/mappreview.png)
+
+Shows a preview of the map inside the editor. Make sure to save before clicking preview so it shows the current version of the map. If autosave is enabled, it will automatically save before showing the preview.
+
+### Map Resizing
+
+![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/resizemap.png)
+![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/resizemap2.png)
+
+Adds a resize map button to allow you to resize maps after they have been created.
 
 ## Browser Compatability:
 * Microsoft Edge 79+
