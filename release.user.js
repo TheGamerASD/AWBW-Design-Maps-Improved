@@ -1,11 +1,9 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.1
+// @version      1.2
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
-// @match        https://awbw.amarriner.com/editmap.php?maps_id=*
-// @match        https://awbw.amarriner.com/design.php*
-// @match        https://awbw.amarriner.com/uploadmap.php*
+// @match        https://awbw.amarriner.com/*
 // @icon         https://cdn.discordapp.com/emojis/929147036677324800.webp?size=96&quality=lossless
 // @grant        none
 // ==/UserScript==
@@ -13,6 +11,62 @@
     'use strict';
     var theme;
     var lastSymmetry;
+    var previewElement;
+    var Pages;
+    (function (Pages) {
+        Pages["All"] = "https://awbw.amarriner.com";
+        Pages["YourMaps"] = "https://awbw.amarriner.com/design.php";
+        Pages["MapEditor"] = "https://awbw.amarriner.com/editmap.php?maps_id=";
+        Pages["UploadMap"] = "https://awbw.amarriner.com/uploadmap.php";
+        Pages["PreviewMap"] = "https://awbw.amarriner.com/prevmaps.php?maps_id=";
+    })(Pages || (Pages = {}));
+    var Module = /** @class */ (function () {
+        function Module(func, page) {
+            this.func = func;
+            this.page = page;
+        }
+        return Module;
+    }());
+    var ModuleManager = /** @class */ (function () {
+        function ModuleManager() {
+        }
+        ModuleManager.registerModule = function (func, page) {
+            this.modules.push(new Module(func, page));
+        };
+        ModuleManager.runModules = function () {
+            for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
+                var module = _a[_i];
+                if (window.location.href.startsWith(module.page)) {
+                    try {
+                        module.func();
+                    }
+                    catch (error) {
+                        console.log(error);
+                    }
+                }
+            }
+        };
+        ModuleManager.modules = [];
+        return ModuleManager;
+    }());
+    var Utils = /** @class */ (function () {
+        function Utils() {
+        }
+        Utils.trimCharEnd = function (string, char) {
+            var start = 0;
+            var end = string.length;
+            while (end > start && string[end - 1] === char)
+                --end;
+            return (start > 0 || end < string.length) ? string.substring(start, end) : string;
+        };
+        return Utils;
+    }());
+    function setGlobalVariables() {
+        if (window.location.href.startsWith(Pages.MapEditor)) {
+            theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
+            lastSymmetry = 0;
+        }
+    }
     function autosaveScript() {
         'use strict';
         var intervalID;
@@ -78,18 +132,18 @@
         var rivers = document.getElementById("rivers");
         var seas = document.getElementById("seas");
         function updateInfo() {
-            cities.textContent = getTiles("city\.");
-            bases.textContent = getTiles("base\.");
-            ports.textContent = getTiles("(?<!air)port\.");
-            airports.textContent = getTiles("airport\.");
-            towers.textContent = getTiles("comtower\.");
-            labs.textContent = getTiles("lab\.");
-            plains.textContent = getTiles("plain\.");
-            roads.textContent = getTiles("(road\.|bridge\.)");
-            forests.textContent = getTiles("wood\.");
-            mountains.textContent = getTiles("mountain\.");
-            rivers.textContent = getTiles("river\.");
-            seas.textContent = getTiles("(sea\.|reef\.)");
+            cities.textContent = getTiles("city\\.");
+            bases.textContent = getTiles("base\\.");
+            ports.textContent = getTiles("(?<!air)port\\.");
+            airports.textContent = getTiles("airport\\.");
+            towers.textContent = getTiles("comtower\\.");
+            labs.textContent = getTiles("lab\\.");
+            plains.textContent = getTiles("plain\\.");
+            roads.textContent = getTiles("(road\\.|bridge\\.)");
+            forests.textContent = getTiles("wood\\.");
+            mountains.textContent = getTiles("mountain\\.");
+            rivers.textContent = getTiles("river\\.");
+            seas.textContent = getTiles("(sea\\.|reef\\.)");
         }
         setInterval(updateInfo, 500);
     }
@@ -503,7 +557,7 @@
     }
     function uploadMapScript() {
         var trow = document.createElement("tr");
-        trow.innerHTML = "<td style=\"vertical-align: top;\">\nMap Data:\n</td>\n<td>\n<textarea style=\"width: 80%; height: 400px;\"></textarea>\n</td>";
+        trow.innerHTML = "<td style=\"vertical-align: top;\">\nMap Data:\n</td>\n<td>\n<textarea wrap=\"off\" style=\"width: 80%; height: 400px; resize: none;\"></textarea>\n</td>";
         var textArea = trow.querySelector("textarea");
         var mapName = document.getElementsByName("name")[0];
         var overwriteMap = document.getElementsByName("overwrite")[0];
@@ -607,25 +661,290 @@
         document.getElementById("current-unit").setAttribute("title", "Select unit (D)");
         document.getElementById("delete-unit").setAttribute("title", "Delete unit (F)");
     }
-    // EDITMAP.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/editmap.php?maps_id=")) {
-        theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
-        lastSymmetry = 0;
-        autosaveScript();
-        infoPanelScript();
-        asyncSaveScript();
-        unitSelectScript();
-        terrainSelectScript();
-        clickThroughScript();
-        symmetryCheckerScript();
-        hotkeysScript();
+    function previewScript() {
+        var saveButton = Object.values(document.getElementsByClassName("norm")).filter(function (e) { return e.textContent.includes("Save"); })[0];
+        var previewButtonElement = document.createElement("td");
+        var previewOn = false;
+        var previewButtonDisabled = false;
+        previewButtonElement.innerHTML = "<a class=\"norm2\" id=\"preview_button\" href=\"#\" style=\"display:block; height: 100%;\">\n<span class=\"small_text\" style=\"line-height:29px; display: block; vertical-align: middle;\" title=\"Toggle Preview Mode\">\n<img style=\"vertical-align: middle;\" src=\"terrain/editmap.gif\">\n<b style=\"vertical-align:middle;\">Preview</b>\n</span></a>";
+        previewButtonElement.setAttribute("class", "norm");
+        previewButtonElement.setAttribute("style", "border-left: solid 1px #888888; text-align:left; padding-left: 5px; padding-right: 5px;");
+        previewButtonElement.setAttribute("height", "30");
+        saveButton.parentElement.appendChild(previewButtonElement);
+        var previewButton = document.getElementById("preview_button");
+        function setPreviewButton(enabled, text) {
+            if (enabled) {
+                previewButtonDisabled = false;
+                previewButton.parentElement.style.removeProperty("background-color");
+                previewButton.style.cursor = "pointer";
+            }
+            else {
+                previewButtonDisabled = true;
+                previewButton.parentElement.style.backgroundColor = "silver";
+                previewButton.style.cursor = "default";
+            }
+            previewButton.querySelector("b").textContent = text;
+        }
+        function previewToggled(e) {
+            if (previewButtonDisabled) {
+                return;
+            }
+            previewOn = !previewOn;
+            if (previewOn) {
+                setPreviewButton(false, "Preview");
+                var mapLink_1 = document.getElementById("design-map-name").childNodes[0].href;
+                mapLink_1 = mapLink_1.replace("editmap.php", "prevmaps.php");
+                var autosaveCheckbox = document.getElementById("autosave_checkbox");
+                if (autosaveCheckbox.checked) {
+                    $.ajax({
+                        method: "POST",
+                        url: "updatemap.php",
+                        contentType: "application/x-www-form-urlencoded",
+                        data: $('#map_form').serialize()
+                    }).then(function () {
+                        $.ajax({
+                            method: "GET",
+                            url: mapLink_1,
+                            contentType: "text/html; charset=UTF-8",
+                            cache: false,
+                            success: function (data) {
+                                var doc = new DOMParser().parseFromString(data, "text/html");
+                                var html = doc.getElementById("gamemap").innerHTML;
+                                var gamemapContainer = document.getElementById("gamemap-container");
+                                var gamemap = document.getElementById("gamemap");
+                                previewElement = document.createElement("div");
+                                previewElement.innerHTML = html;
+                                previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%; pointer-events: none;"));
+                                var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
+                                mapBackground.src = mapBackground.src += "?" + Date.now();
+                                gamemapContainer.appendChild(previewElement);
+                                gamemap.style.display = "none";
+                                setPreviewButton(true, "Edit");
+                            },
+                            error: function () {
+                                previewOn = false;
+                                alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                                setPreviewButton(true, "Preview");
+                            }
+                        });
+                    });
+                }
+                else {
+                    $.ajax({
+                        method: "GET",
+                        url: mapLink_1,
+                        contentType: "text/html; charset=UTF-8",
+                        cache: false,
+                        success: function (data) {
+                            var doc = new DOMParser().parseFromString(data, "text/html");
+                            var html = doc.getElementById("gamemap").innerHTML;
+                            var gamemapContainer = document.getElementById("gamemap-container");
+                            var gamemap = document.getElementById("gamemap");
+                            previewElement = document.createElement("div");
+                            previewElement.innerHTML = html;
+                            previewElement.setAttribute("style", "scale: ".concat(localStorage.getItem("scale"), "; height: 0.5%; pointer-events: none;"));
+                            var mapBackground = Object.values(previewElement.childNodes).find(function (c) { return c.id === "map-background"; });
+                            mapBackground.src = mapBackground.src += "?" + Date.now();
+                            gamemapContainer.appendChild(previewElement);
+                            gamemap.style.display = "none";
+                            setPreviewButton(true, "Edit");
+                        },
+                        error: function () {
+                            previewOn = false;
+                            alert("An error has occurred while trying to get the map preview. Please make sure you are connected to the internet.");
+                            setPreviewButton(true, "Preview");
+                        }
+                    });
+                }
+            }
+            else {
+                setPreviewButton(true, "Preview");
+                var gamemapContainer = document.getElementById("gamemap-container");
+                var gamemap = document.getElementById("gamemap");
+                gamemap.style.removeProperty("display");
+                gamemapContainer.removeChild(previewElement);
+            }
+        }
+        previewButton.onclick = previewToggled;
     }
-    // DESIGN.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/design.php")) {
-        createMapScript();
+    function fixCacheScript() {
+        var mapBackground = document.getElementById("map-background");
+        mapBackground.src = mapBackground.src + "?" + Date.now();
     }
-    // UPLOADMAP.PHP
-    if (window.location.toString().startsWith("https://awbw.amarriner.com/uploadmap.php")) {
-        uploadMapScript();
+    function mapResizeScript() {
+        var main = document.getElementById("main");
+        var tables = Object.values(main.children).filter(function (e) { return e.style.width === "900px"; });
+        var tableRows = tables.map(function (t) { return t.children[0].children[1].children[0].children[0].children[0].children[1].children[0].children[0].children[0].children[0]; });
+        var mapNames = {};
+        tableRows.forEach(function (tr) {
+            var mapPreviewButton = document.createElement("td");
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.setAttribute("style", "text-align:left; padding-left: 4px; padding-bottom: 3px;");
+            mapPreviewButton.setAttribute("width", "125");
+            mapPreviewButton.setAttribute("height", "35");
+            mapPreviewButton.setAttribute("class", "norm");
+            mapPreviewButton.innerHTML = "<span class=\"small_text\" title=\"Resize this design map\">\n<a class=\"norm2\" style=\"display:block;color: #000000;text-decoration: none;font-weight: normal;cursor: pointer;\">\n<img style=\"vertical-align:middle;\" src=\"terrain/zoomin.gif\">\n<b style=\"padding-right: 3px; vertical-align:middle;\">Resize Map</b>\n</a></span>";
+            tr.appendChild(mapPreviewButton);
+            var mapID = mapPreviewButton.parentElement.children[0].children[0].children[0].href.match(/(?<=https:\/\/awbw\.amarriner\.com\/editmap\.php\?maps_id=)\d+/)[0];
+            mapNames[mapID] = tr.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[0].children[0].children[1].children[0].textContent;
+            mapPreviewButton.setAttribute("mapid", mapID);
+            mapPreviewButton.querySelector("a").onclick = function () { return onResizeMapClick(mapID, mapNames); };
+        });
+        function onResizeMapClick(mapID, mapNames) {
+            var resizePrompt = document.createElement("div");
+            resizePrompt.setAttribute("style", "position: fixed; left: 50vw; top: 50vh; margin-top: -7%; margin-left: -8%; z-index: 1;");
+            resizePrompt.setAttribute("id", "resize_prompt");
+            resizePrompt.innerHTML = "<table cellspacing=\"0\" cellpadding=\"0\"><tbody><tr>\n<td class=\"bordertitle\" height=\"20\"><b>Resize Map</b></td></tr><tr>\n<td class=\"borderwhite\" style=\"padding-top: 3px;\">\n<form name=\"\" style=\"padding-left: 2px; padding-right: 2px; margin-bottom: 5px;\">\n<table cellspacing=\"1\" cellpadding=\"2\"><tbody><tr><td><b>X Axis:</b></td></tr><tr><td>\n<select class=\"select_left\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>left by</td><td>\n<input class=\"text input_left\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td>\n<select class=\"select_right\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>right by</td><td>\n<input class=\"text input_right\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class=\"select_top\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>top by</td><td>\n<input class=\"text input_top\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td><select class=\"select_bottom\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>bottom by</td><td>\n<input class=\"text input_bottom\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Resize\"></td></tr><tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Cancel\"></td></tr>\n</tbody></tbody></table></form></td></tr></tbody></table>";
+            document.getElementById("main").appendChild(resizePrompt);
+            resizePrompt.getElementsByClassName("submit")[0].onclick = function () { return onResize(mapID, mapNames); };
+            resizePrompt.getElementsByClassName("submit")[1].onclick = onResizeCancel;
+            var darkFilter = document.createElement("div");
+            darkFilter.setAttribute("style", "width: 100vw;height: 100vh;background-color: #00000050;position: fixed;top: 0vh;left: 0vw;");
+            darkFilter.setAttribute("id", "dark_filter");
+            document.getElementById("main").appendChild(darkFilter);
+        }
+        function onResize(mapID, mapNames) {
+            var resizePrompt = document.getElementById("resize_prompt");
+            if (!confirm("Are you sure you want to resize \"".concat(mapNames[mapID], "\"? Resizing a map will remove all predeployed units from it."))) {
+                resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+                document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+                return;
+            }
+            var topInput = resizePrompt.getElementsByClassName("input_top")[0];
+            var bottomInput = resizePrompt.getElementsByClassName("input_bottom")[0];
+            var leftInput = resizePrompt.getElementsByClassName("input_left")[0];
+            var rightInput = resizePrompt.getElementsByClassName("input_right")[0];
+            if (!topInput.validity.valid || !bottomInput.validity.valid || !leftInput.validity.valid || !rightInput.validity.valid) {
+                topInput.reportValidity();
+                bottomInput.reportValidity();
+                leftInput.reportValidity();
+                rightInput.reportValidity();
+                return;
+            }
+            resizePrompt.parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+            var top = parseInt(topInput.value);
+            var bottom = parseInt(bottomInput.value);
+            var left = parseInt(leftInput.value);
+            var right = parseInt(rightInput.value);
+            var topExpand = resizePrompt.getElementsByClassName("select_top")[0].value === "Expand";
+            var bottomExpand = resizePrompt.getElementsByClassName("select_bottom")[0].value === "Expand";
+            var leftExpand = resizePrompt.getElementsByClassName("select_left")[0].value === "Expand";
+            var rightExpand = resizePrompt.getElementsByClassName("select_right")[0].value === "Expand";
+            function resizeMap(mapData) {
+                var mapLines = mapData.split('\n').map(function (l) { return Utils.trimCharEnd(l, '\n'); });
+                var mapWidth = mapLines[0].split(',').length;
+                var mapHeight = mapLines.length;
+                var tile = "28,";
+                var tileRaw = "28";
+                function getChange(change, mode) {
+                    if (mode)
+                        return change;
+                    else
+                        return -change;
+                }
+                var newHeight = mapHeight + getChange(top, topExpand) + getChange(bottom, bottomExpand);
+                var newWidth = mapWidth + getChange(left, leftExpand) + getChange(right, rightExpand);
+                if (newHeight > 36 || newHeight < 5 || newWidth > 36 || newWidth < 5) {
+                    return "";
+                }
+                var index = 0;
+                mapLines.forEach(function (mapLine) {
+                    var lineArray = mapLine.split(',');
+                    if (left != 0) {
+                        if (leftExpand) {
+                            for (var i = 0; i < left; i++) {
+                                lineArray.unshift(tileRaw);
+                            }
+                        }
+                        else {
+                            lineArray = lineArray.slice(left);
+                        }
+                    }
+                    if (right != 0) {
+                        if (rightExpand) {
+                            for (var i = 0; i < right; i++) {
+                                lineArray.push(tileRaw);
+                            }
+                        }
+                        else {
+                            lineArray = lineArray.slice(0, lineArray.length - right);
+                        }
+                    }
+                    mapLines[index] = Utils.trimCharEnd(lineArray.join(','), ',');
+                    index++;
+                });
+                if (top != 0) {
+                    if (topExpand) {
+                        for (var i = 0; i < top; i++) {
+                            mapLines.unshift(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(top);
+                    }
+                }
+                if (bottom != 0) {
+                    if (bottomExpand) {
+                        for (var i = 0; i < bottom; i++) {
+                            mapLines.push(Utils.trimCharEnd(tile.repeat(newWidth), ","));
+                        }
+                    }
+                    else {
+                        mapLines = mapLines.slice(0, mapLines.length - bottom);
+                    }
+                }
+                return mapLines.join('\n');
+            }
+            $.ajax({
+                method: "GET",
+                url: "https://awbw.amarriner.com/text_map.php?maps_id=".concat(mapID),
+                contentType: "text/html; charset=UTF-8",
+                cache: false,
+                success: function (data) {
+                    var doc = new DOMParser().parseFromString(data, "text/html");
+                    var mapData = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
+                    console.log(mapData);
+                    var resizedMapData = resizeMap(mapData);
+                    if (resizedMapData === "") {
+                        alert("Resize canceled. Resizing map would give it an invalid size.");
+                        return;
+                    }
+                    fetch("/uploadmap.php", {
+                        method: "POST",
+                        body: "-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"action\"\n\nUPLOAD\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"mapfile\"; filename=\"data.txt\"\nContent-Type: text/plain\n\n".concat(resizedMapData, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"name\"\n\n").concat(mapNames[mapID], "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"format\"\n\nAWBW\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"overwrite\"\n\n").concat(mapID, "\n-----------------------------216783749517670898471830319234--"),
+                        headers: {
+                            "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                        }
+                    }).then(function () {
+                        window.location.href = "https://awbw.amarriner.com/design.php#map_".concat(mapID);
+                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src === "https://awbw.amarriner.com/smallmaps/".concat(mapID, ".png"); });
+                        mapPreview.src = mapPreview.src + "?" + Date.now();
+                    });
+                },
+                error: function () {
+                    alert("An error has occurred. Please make sure you are connected to the internet.");
+                }
+            });
+        }
+        function onResizeCancel() {
+            document.getElementById("resize_prompt").parentElement.removeChild(document.getElementById("resize_prompt"));
+            document.getElementById("dark_filter").parentElement.removeChild(document.getElementById("dark_filter"));
+        }
     }
+    ModuleManager.registerModule(setGlobalVariables, Pages.All);
+    ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
+    ModuleManager.registerModule(asyncSaveScript, Pages.MapEditor);
+    ModuleManager.registerModule(unitSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(terrainSelectScript, Pages.MapEditor);
+    ModuleManager.registerModule(clickThroughScript, Pages.MapEditor);
+    ModuleManager.registerModule(symmetryCheckerScript, Pages.MapEditor);
+    ModuleManager.registerModule(hotkeysScript, Pages.MapEditor);
+    ModuleManager.registerModule(previewScript, Pages.MapEditor);
+    ModuleManager.registerModule(createMapScript, Pages.YourMaps);
+    ModuleManager.registerModule(mapResizeScript, Pages.YourMaps);
+    ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
+    ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
+    ModuleManager.runModules();
 })();
