@@ -72,3 +72,4 @@ Adds a resize map button to allow you to resize maps after they have been create
 * Chrome 62+
 * Firefox 78+
 * Opera 49+
+* Tor Browser (Experimental)
