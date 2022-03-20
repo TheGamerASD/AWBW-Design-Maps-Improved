@@ -138,42 +138,49 @@
         'use strict';
 
         var gmCont = document.getElementById("gamemap");
+        var html: string;
 
-        function getTiles(name: string): string {
-            return (gmCont.innerHTML.match(new RegExp(name, "g")) || []).length.toString();
+        function getTiles(name: string): number {
+            return (html.match(new RegExp(name, "g")) || []).length;
         }
 
         var infoPanel = document.createElement("div");
         infoPanel.innerHTML = `<table cellpadding'2'='' style='background-color: #EEEEEE; border: 1px solid #AAAAAA; ' cellspacing='0'>
 <tbody><tr>
 <td style='padding-left: 2px;'><img src='https://awbw.amarriner.com/terrain/${theme}/neutralcity.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='cities'>6</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='cities'>0</span></b></td>
 <td style='width: 50px; text-align: right;'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/neutralbase.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='bases'>5</span></b></td>
-<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/plain.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='plains'>5</span></b></td>
-<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/mountain.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='mountains'>5</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='bases'>0</span></b></td>
+<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/plain.gif' style='position: relative;top: 3px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='plains'>0</span></b></td>
+<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/mountain.gif' style='position: relative;top: 1px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='mountains'>0</span></b></td>
+<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/coin.png?raw=true' style='position: relative;top: 3px;width: 16px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='money' style="padding-right: 2px;">0</span></b></td>
 </tr>
 <tr>
 <td style='padding-left: 2px;'><img src='https://awbw.amarriner.com/terrain/${theme}/neutralport.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='ports'>1</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='ports'>0</span></b></td>
 <td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/neutralairport.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='airports'>2</span></b></td>
-<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/vroad.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='roads'>2</span></b></td>
-<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/vriver.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='rivers'>2</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='airports'>0</span></b></td>
+<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/vroad.gif' style='position: relative;top: 3px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='roads'>0</span></b></td>
+<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/vriver.gif' style='position: relative;top: 1px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='rivers'>0</span></b></td>
+<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/moneycountry.png?raw=true' style='position: relative;top: 3px;width: 16px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='moneycountry' style="padding-right: 2px;">0</span></b></td>
 </tr>
 <tr>
 <td style='padding-left: 2px;'><img src='https://awbw.amarriner.com/terrain/${theme}/neutralcomtower.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='towers'>3</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='towers'>0</span></b></td>
 <td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/neutrallab.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='labs'>1</span></b></td>
-<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/wood.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='forests'>1</span></b></td>
-<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/sea.gif'></td>
-<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='seas'>1</span></b></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='labs'>0</span></b></td>
+<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/wood.gif' style='position: relative;top: 3px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='forests'>0</span></b></td>
+<td style='width: 50px; text-align: right'> &nbsp; <img src='https://awbw.amarriner.com/terrain/${theme}/sea.gif' style='position: relative;top: 1px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='seas'>0</span></b></td>
+<td style='width: 50px; text-align: right;'> &nbsp; <img src='https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/moneybase.png?raw=true' style='position: relative;top: 3px;width: 16px;'></td>
+<td style='vertical-align: middle; text-align: right; padding-right: 2px;'><b> &nbsp; <span class='small_text_11' id='moneybase' style="padding-right: 2px;">0</span></b></td>
 </tr>
 </tbody></table>`;
         document.getElementById("gamecontainer").appendChild(infoPanel);
@@ -190,23 +197,77 @@
         var mountains: HTMLElement = document.getElementById("mountains");
         var rivers: HTMLElement = document.getElementById("rivers");
         var seas: HTMLElement = document.getElementById("seas");
+        var money: HTMLElement = document.getElementById("money");
+        var moneycountry: HTMLElement = document.getElementById("moneycountry");
+        var moneybase: HTMLElement = document.getElementById("moneybase");
 
         function updateInfo() {
-            cities.textContent = getTiles("city\\.");
-            bases.textContent = getTiles("base\\.");
-            ports.textContent = getTiles("(?<!air)port\\.");
-            airports.textContent = getTiles("airport\\.");
-            towers.textContent = getTiles("comtower\\.");
-            labs.textContent = getTiles("lab\\.");
-            plains.textContent = getTiles("plain\\.");
-            roads.textContent = getTiles("(road\\.|bridge\\.)");
-            forests.textContent = getTiles("wood\\.");
-            mountains.textContent = getTiles("mountain\\.");
-            rivers.textContent = getTiles("river\\.");
-            seas.textContent = getTiles("(sea\\.|reef\\.)");
+            html = gmCont.innerHTML;
+
+            cities.textContent = getTiles("city\\.").toString();
+            bases.textContent = getTiles("base\\.").toString();
+            ports.textContent = getTiles("(?<!air)port\\.").toString();
+            airports.textContent = getTiles("airport\\.").toString();
+            towers.textContent = getTiles("comtower\\.").toString();
+            labs.textContent = getTiles("lab\\.").toString();
+            plains.textContent = getTiles("plain\\.").toString();
+            roads.textContent = getTiles("(road\\.|bridge\\.)").toString();
+            forests.textContent = getTiles("wood\\.").toString();
+            mountains.textContent = getTiles("mountain\\.").toString();
+            rivers.textContent = getTiles("river\\.").toString();
+            seas.textContent = getTiles("(sea\\.|reef\\.)").toString();
+            let hqs: number = getTiles("hq\\.");
+            let totalIncome: number = parseInt(bases.textContent) + parseInt(ports.textContent) + parseInt(airports.textContent) + parseInt(cities.textContent) + hqs;
+            let countries: number = 0;
+            if(hqs === 0)
+            {
+                if(labs.textContent !== "0")
+                {
+                    if (getTiles("orangestarlab\\.") > 0) countries++;
+                    if (getTiles("bluemoonlab\\.") > 0) countries++;
+                    if (getTiles("greenearthlab\\.") > 0) countries++;
+                    if (getTiles("yellowcometlab\\.") > 0) countries++;
+                    if (getTiles("blackholelab\\.") > 0) countries++;
+                    if (getTiles("redfirelab\\.") > 0) countries++;
+                    if (getTiles("greyskylab\\.") > 0) countries++;
+                    if (getTiles("browndesertlab\\.") > 0) countries++;
+                    if (getTiles("amberblazelab\\.") > 0) countries++;
+                    if (getTiles("jadesunlab\\.") > 0) countries++;
+                    if (getTiles("cobalticelab\\.") > 0) countries++;
+                    if (getTiles("pinkcosmoslab\\.") > 0) countries++;
+                    if (getTiles("tealgalaxylab\\.") > 0) countries++;
+                    if (getTiles("purplelightninglab\\.") > 0) countries++;
+                    if (getTiles("acidrainlab\\.") > 0) countries++;
+                    if (getTiles("whitenovalab\\.") > 0) countries++;
+                }
+            }
+            else
+            {
+                if (getTiles("orangestarhq\\.") > 0) countries++;
+                if (getTiles("bluemoonhq\\.") > 0) countries++;
+                if (getTiles("greenearthhq\\.") > 0) countries++;
+                if (getTiles("yellowcomethq\\.") > 0) countries++;
+                if (getTiles("blackholehq\\.") > 0) countries++;
+                if (getTiles("redfirehq\\.") > 0) countries++;
+                if (getTiles("greyskyhq\\.") > 0) countries++;
+                if (getTiles("browndeserthq\\.") > 0) countries++;
+                if (getTiles("amberblazehq\\.") > 0) countries++;
+                if (getTiles("jadesunhq\\.") > 0) countries++;
+                if (getTiles("cobalticehq\\.") > 0) countries++;
+                if (getTiles("pinkcosmoshq\\.") > 0) countries++;
+                if (getTiles("tealgalaxyhq\\.") > 0) countries++;
+                if (getTiles("purplelightninghq\\.") > 0) countries++;
+                if (getTiles("acidrainhq\\.") > 0) countries++;
+                if (getTiles("whitenovahq\\.") > 0) countries++;
+            }
+            money.textContent = totalIncome.toString() + "k ";
+            let moneyPerCountry: number = Math.round(totalIncome / countries * 100) / 100;
+            moneycountry.textContent = isFinite(moneyPerCountry) ? moneyPerCountry.toString() + "k " : "0k ";
+            let moneyPerBase: number = Math.round(totalIncome / parseInt(bases.textContent) * 100) / 100
+            moneybase.textContent = isFinite(moneyPerBase) ? moneyPerBase.toString() + "k " : "0k ";
         }
 
-        setInterval(updateInfo, 500);
+        setInterval(updateInfo, 400);
     }
 
     function asyncSaveScript() {
