@@ -14,6 +14,7 @@ Turn on autosave by using the checkbox. When turned on, autosave will save every
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/infopanel.png)
 
 The info panel appears below the map and shows information about the map in the map editor.
+You can also see the total income, income per country, and income per base of the map.
 ### Refreshless Saving
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/asyncsave.png)
@@ -40,6 +41,7 @@ You will be shown if your map contains any asymmetries with the currently select
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/createmapform.png)
 
 The create map form has been improved to make it easier to create a map.
+In addition, you can now create maps up to 50x50, though you still won't be able to edit tiles after the 1,333rd tile.
 ### Fileless Upload Map
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/uploadmap.png)
@@ -66,6 +68,13 @@ Shows a preview of the map inside the editor. Make sure to save before clicking 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/resizemap2.png)
 
 Adds a resize map button to allow you to resize maps after they have been created.
+
+### Auto-tiling
+
+![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/autotiling.png)
+
+Adds auto-tiling roads and rivers to the terrain select menu.
+The gear icon means that it is auto-tiling.
 
 ## Browser Compatability:
 * Microsoft Edge 79+

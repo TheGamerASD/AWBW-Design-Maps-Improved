@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.2
+// @version      1.3
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/*
@@ -47,12 +47,14 @@
                         module.func();
                     }
                     catch (error) {
-                        console.log(error);
+                        console.warn(`Error occurred in module '${module.func.name}': ` + error);
                     }
                 }
             }
         }
     }
+
+    let GlobalFunctions: { [name: string]: Function } = {};
 
     abstract class Utils {
         public static trimCharEnd(string: string, char: string) {
@@ -66,10 +68,80 @@
         }
     }
 
-    function setGlobalVariables() {
+    function setGlobals() {
         if (window.location.href.startsWith(Pages.MapEditor)) {
             theme = document.getElementById("current-building").querySelector("img").src.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/)\w+/)[0];
             lastSymmetry = 0;
+            window.terrain_name = "";
+            window.id = 0;
+        }
+
+        GlobalFunctions.uploadMap = async (mapName: string, mapData: string): Promise<Response> => {
+            return await fetch("/uploadmap.php",
+                {
+                    method: "POST",
+
+                    body: `-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="action"
+
+UPLOAD
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="mapfile"; filename="data.txt"
+Content-Type: text/plain
+
+${mapData}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="name"
+
+${mapName}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="format"
+
+AWBW
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="overwrite"
+
+new
+-----------------------------216783749517670898471830319234--`,
+                    headers:
+                    {
+                        "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                    }
+                });
+        }
+
+        GlobalFunctions.overwriteMap = async (mapName: string, overwriteID: string, mapData: string): Promise<Response> => {
+            return await fetch("/uploadmap.php",
+                {
+                    method: "POST",
+
+                    body: `-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="action"
+
+UPLOAD
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="mapfile"; filename="data.txt"
+Content-Type: text/plain
+
+${mapData}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="name"
+
+${mapName}
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="format"
+
+AWBW
+-----------------------------216783749517670898471830319234
+Content-Disposition: form-data; name="overwrite"
+
+${overwriteID}
+-----------------------------216783749517670898471830319234--`,
+                    headers:
+                    {
+                        "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
+                    }
+                });
         }
     }
 
@@ -97,7 +169,7 @@
             }
 
             if (checked) {
-                intervalID = setInterval(saveAsync, 20 * 1000);
+                intervalID = setInterval(saveAsync, 10 * 1000);
             }
             else {
                 clearInterval(intervalID);
@@ -219,10 +291,8 @@
             let hqs: number = getTiles("hq\\.");
             let totalIncome: number = parseInt(bases.textContent) + parseInt(ports.textContent) + parseInt(airports.textContent) + parseInt(cities.textContent) + hqs;
             let countries: number = 0;
-            if(hqs === 0)
-            {
-                if(labs.textContent !== "0")
-                {
+            if (hqs === 0) {
+                if (labs.textContent !== "0") {
                     if (getTiles("orangestarlab\\.") > 0) countries++;
                     if (getTiles("bluemoonlab\\.") > 0) countries++;
                     if (getTiles("greenearthlab\\.") > 0) countries++;
@@ -241,8 +311,7 @@
                     if (getTiles("whitenovalab\\.") > 0) countries++;
                 }
             }
-            else
-            {
+            else {
                 if (getTiles("orangestarhq\\.") > 0) countries++;
                 if (getTiles("bluemoonhq\\.") > 0) countries++;
                 if (getTiles("greenearthhq\\.") > 0) countries++;
@@ -688,6 +757,11 @@
                         <img id=\"nesriver.gif\" class=\"design\" src=\"https://awbw.amarriner.com/terrain/${theme}/nesriver.gif\"
                             border=\"type=image\"></a>
                 </td>
+                <td class=\"bordergrey\">
+                    <a href=\"javascript:changeSquare(-1, 'autoriver.gif', 'terrain'); closeMenu(terrainTable);\">
+                        <img id=\"autoriver.gif\" class=\"design\" src=\"https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/autoriver.png?raw=true\"
+                            border=\"type=image\" style=\"width:16px; height: 16px;\"></a>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -751,6 +825,11 @@
                     <a href=\"javascript:changeSquare(25, 'nesroad.gif', 'terrain'); closeMenu(terrainTable);\">
                         <img id=\"nesroad.gif\" class=\"design\" src=\"https://awbw.amarriner.com/terrain/${theme}/nesroad.gif\"
                             border=\"type=image\"></a>
+                </td>
+                <td class=\"bordergrey\">
+                    <a href=\"javascript:changeSquare(-2, 'autoroad.gif', 'terrain'); closeMenu(terrainTable);\">
+                        <img id=\"autoroad.gif\" class=\"design\" src=\"https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/autoroad.png?raw=true\"
+                            border=\"type=image\" style=\"width:16px; height: 16px;\"></a>
                 </td>
                 <td class=\"bordergrey\">
                     <a href=\"javascript:changeSquare(26, 'hbridge.gif', 'terrain'); closeMenu(terrainTable);\">
@@ -1057,24 +1136,24 @@
     }
 
     function createMapScript() {
-        var innerCreateMapTable = Object.values(document.querySelectorAll("form")).filter(f => f.name === "" && f.action === "https://awbw.amarriner.com/design.php" && f.className !== "login-form")[0].parentElement;
+        let innerCreateMapTable = Object.values(document.querySelectorAll("form")).filter(f => f.name === "" && f.action === "https://awbw.amarriner.com/design.php" && f.className !== "login-form")[0].parentElement;
         innerCreateMapTable.innerHTML = `<form name=\"\" create1=\"\" action=\"design.php\" method=\"post\">
     <table cellspacing=\"1\" cellpadding=\"2\">
         <tbody>
             <tr>
                 <td>Map Name:</td>
-                <td><input type=\"text\" class=\"text\" name=\"maps_name\" maxlength=\"100\" style=\"padding-left: 3px;\"></td>
+                <td><input type=\"text\" id=\"create_map_name\" class=\"text\" name=\"maps_name\" maxlength=\"100\" style=\"padding-left: 3px;\"></td>
             </tr>
             <tr>
                 <td style=\"text-align: right;\">Width:</td>
                 <td>
-                    <input class=\"text\" name=\"maps_width\" min=\"5\" max=\"36\" value="20" type=\"number\" style=\"width: 32%; padding-left: 3px;\">
+                    <input class=\"text\" name=\"maps_width\" min=\"5\" max=\"50\" value="20" type=\"number\" style=\"width: 32%; padding-left: 3px;\">
                 </td>
             </tr>
             <tr>
                 <td style=\"text-align: right;\">Height:</td>
                 <td>
-                    <input class=\"text\" name=\"maps_height\" min=\"5\" max=\"36\" value="20" type=\"number\" style=\"width: 32%; padding-left: 3px;\">
+                    <input class=\"text\" name=\"maps_height\" min=\"5\" max=\"50\" value="20" type=\"number\" style=\"width: 32%; padding-left: 3px;\">
                 </td>
             </tr>
             <tr>
@@ -1085,6 +1164,28 @@
     </table>
     <input type=\"hidden\" name=\"maps_new\" value=\"1\">
 </form>`;
+
+        async function onMapCreate(e: SubmitEvent) {
+            let width: number = parseInt((document.getElementsByName("maps_width")[0] as HTMLInputElement).value);
+            let height: number = parseInt((document.getElementsByName("maps_height")[0] as HTMLInputElement).value);
+
+            if (height > 36 || width > 36) {
+                e.preventDefault();
+                let mapString = "28,";
+                mapString = mapString.repeat(width);
+                mapString = Utils.trimCharEnd(mapString, ',');
+                mapString += "\n";
+                mapString = mapString.repeat(height);
+                mapString = Utils.trimCharEnd(mapString, '\n');
+
+                let mapName: string = (document.getElementById("create_map_name") as HTMLInputElement).value;
+                await GlobalFunctions.uploadMap(mapName, mapString);
+                window.location.href = "https://awbw.amarriner.com/design.php";
+            }
+        }
+
+        let form: HTMLFormElement = innerCreateMapTable.querySelector("form");
+        form.onsubmit = onMapCreate;
     }
 
     function clickThroughScript() {
@@ -1096,14 +1197,8 @@
                 squareSpan.style.pointerEvents = "none";
                 var onClickString = "javascript:" + squareSpan.querySelector("img").onclick.toString().split('\n')[1].split(';')[0] + ";";
                 var newA = document.createElement("a");
-                newA.setAttribute(
-                    "style",
-                    "width: inherit; aspect-ratio: 1/1; position: relative; top: -16px; pointer-events: all; display: block;"
-                );
-                newA.setAttribute(
-                    "href",
-                    onClickString
-                );
+                newA.setAttribute("style", "width: inherit; aspect-ratio: 1/1; position: relative; top: -16px; pointer-events: all; display: block; outline: 0;");
+                newA.setAttribute("href", onClickString);
                 squareSpan.appendChild(newA);
 
                 squareSpan.style.borderLeft = "";
@@ -1113,12 +1208,17 @@
             }
         }
 
-        oldupdate = (square: string, hidden: string, x: number, y: number, thetop: string) => {
+        oldupdate = (square: string, hidden: string, x: number, y: number, thetop: number) => {
             //close menus
             closeMenu(terrainTable);
             closeMenu(countryTable);
             closeMenu(buildingTable);
             closeMenu(unitTable);
+
+            if (symndx < 0) {
+                GlobalFunctions.placeAutoTile(symndx, x, y);
+                return;
+            }
 
             var tx: string = x.toString();
             if (parseInt(tx) < 10) {
@@ -1151,7 +1251,7 @@
                 var newDiv = document.createElement("a");
                 newDiv.setAttribute(
                     "style",
-                    "width: inherit; aspect-ratio: 1/1; position: relative; top: -16px; pointer-events: all; display: block;"
+                    "width: inherit; aspect-ratio: 1/1; position: relative; top: -16px; pointer-events: all; display: block; outline: 0;"
                 );
                 newDiv.setAttribute(
                     "href",
@@ -1171,7 +1271,7 @@
                 theNode.appendChild(newhref);
                 theNode.firstChild.appendChild(newimg);
                 theNode.appendChild(newDiv);
-                theNode.style.top = thetop + tops[curndx];
+                theNode.style.top = (thetop + tops[curndx]).toString();
 
                 //create hidden node
                 theHiddenNode.setAttribute("value", x + "," + y + "," + terrain[symndx]);
@@ -1200,9 +1300,9 @@
                     newimg.classList.add("predeployed-unit-img");
 
                     if (!curndx) {
-                        theNode.style.top = thetop + tops[1];
+                        theNode.style.top = (thetop + tops[1]).toString();
                     } else {
-                        theNode.style.top = thetop + tops[curndx];
+                        theNode.style.top = (thetop + tops[curndx]).toString();
                     }
                     theUnitNode.setAttribute("value", x + "," + y + "," + units[curndx]);
                     theCodeNode.setAttribute("value", x + "," + y + "," + code);
@@ -1467,43 +1567,12 @@ Map Data:
         var submitButton: HTMLInputElement = document.getElementsByClassName("submit")[0] as HTMLInputElement;
         submitButton.setAttribute("type", "button");
 
-        function onMapSubmit() {
-            fetch("/uploadmap.php",
-                {
-                    method: "POST",
+        async function onMapSubmit() {
+            let response: Response = await GlobalFunctions.overwriteMap(mapName.value, overwriteMap.value, textArea.value);
+            let html: string = await response.text();
 
-                    body: `-----------------------------216783749517670898471830319234
-Content-Disposition: form-data; name="action"
-
-UPLOAD
------------------------------216783749517670898471830319234
-Content-Disposition: form-data; name="mapfile"; filename="data.txt"
-Content-Type: text/plain
-
-${textArea.value}
------------------------------216783749517670898471830319234
-Content-Disposition: form-data; name="name"
-
-${mapName.value}
------------------------------216783749517670898471830319234
-Content-Disposition: form-data; name="format"
-
-AWBW
------------------------------216783749517670898471830319234
-Content-Disposition: form-data; name="overwrite"
-
-${overwriteMap.value}
------------------------------216783749517670898471830319234--`,
-                    headers:
-                    {
-                        "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
-                    }
-                }).then((html: Response) => {
-                    html.text().then((text: string) => {
-                        document.body.innerHTML = text;
-                        setTimeout(() => window.location.href = "https://awbw.amarriner.com/design.php", 1500);
-                    });
-                })
+            document.body.innerHTML = html;
+            setTimeout(() => window.location.href = "https://awbw.amarriner.com/design.php", 1000);
         }
 
         submitButton.onclick = onMapSubmit;
@@ -1971,7 +2040,296 @@ ${mapID}
         }
     }
 
-    ModuleManager.registerModule(setGlobalVariables, Pages.All);
+    function autoTileScript() {
+
+        function getTile(x: number, y: number): string {
+            if (x < 0 || y < 0 || x > mapwidth || y > mapheight) {
+                return "";
+            }
+
+            let xid: string = x.toString(); if (x < 10) { xid = '0' + x; }
+            let yid: string = y.toString(); if (y < 10) { yid = '0' + y; }
+
+            let squareSrc = document.getElementById(`square${xid}${yid}`).querySelector("img").src;
+            squareSrc = squareSrc.match(/(?<=https:\/\/awbw\.amarriner\.com\/terrain\/(aw1|aw2|ani)\/)[\w\.]+/)[0];
+            return squareSrc;
+        }
+
+        function placeTile(tile: number, x: number, y: number) {
+            let square: string = `square${x.toString().padStart(2, "0")}${y.toString().padStart(2, "0")}`;
+            let hidden: string = `hidden${x.toString().padStart(2, "0")}${y.toString().padStart(2, "0")}`;
+            let top: number = y * 16;
+            let oldCurndx: number = curndx;
+            let oldSymndx: number = symndx;
+
+            curndx = tile;
+            symndx = tile;
+
+            oldupdate(square, hidden, x, y, top);
+
+            curndx = oldCurndx;
+            symndx = oldSymndx;
+        }
+
+        function setTileAuto(tileset: number[], tileName: string, altTileName: string, x: number, y: number) {
+            let up: boolean = getTile(x, y - 1).includes(tileName) || getTile(x, y - 1).includes(altTileName);
+            let down: boolean = getTile(x, y + 1).includes(tileName) || getTile(x, y + 1).includes(altTileName);
+            let left: boolean = getTile(x - 1, y).includes(tileName) || getTile(x - 1, y).includes(altTileName);
+            let right: boolean = getTile(x + 1, y).includes(tileName) || getTile(x + 1, y).includes(altTileName);
+
+            if (up && down && left && right) {
+                placeTile(tileset[2], x, y);
+            }
+            else if (left && right && down) {
+                placeTile(tileset[7], x, y);
+            }
+            else if (left && up && down) {
+                placeTile(tileset[8], x, y);
+            }
+            else if (left && right && up) {
+                placeTile(tileset[9], x, y);
+            }
+            else if (up && right && down) {
+                placeTile(tileset[10], x, y);
+            }
+            else if (right && down) {
+                placeTile(tileset[3], x, y);
+            }
+            else if (left && down) {
+                placeTile(tileset[4], x, y);
+            }
+            else if (left && up) {
+                placeTile(tileset[5], x, y);
+            }
+            else if (right && up) {
+                placeTile(tileset[6], x, y);
+            }
+            else if (right || left) {
+                placeTile(tileset[0], x, y);
+            }
+            else if (up || down) {
+                placeTile(tileset[1], x, y);
+            }
+            else if (y === 0 || y === mapheight) {
+                placeTile(tileset[1], x, y);
+            }
+            else {
+                placeTile(tileset[0], x, y);
+            }
+        }
+
+        GlobalFunctions.placeAutoTile = (autotile: number, x: number, y: number) => {
+            if (autotile === -1) {
+                let riverTileset: number[] = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+
+                setTileAuto(riverTileset, "river.", null, x, y);
+
+                if (getTile(x + 1, y).includes("river.")) {
+                    setTileAuto(riverTileset, "river.", null, x + 1, y);
+                }
+                if (getTile(x - 1, y).includes("river.")) {
+                    setTileAuto(riverTileset, "river.", null, x - 1, y);
+                }
+                if (getTile(x, y + 1).includes("river.")) {
+                    setTileAuto(riverTileset, "river.", null, x, y + 1);
+                }
+                if (getTile(x, y - 1).includes("river.")) {
+                    setTileAuto(riverTileset, "river.", null, x, y - 1);
+                }
+            }
+            else if (autotile === -2) {
+                let roadTileset: number[] = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+
+                setTileAuto(roadTileset, "road.", "bridge.", x, y);
+
+                if (getTile(x + 1, y).includes("road.")) {
+                    setTileAuto(roadTileset, "road.", "bridge.", x + 1, y);
+                }
+                if (getTile(x - 1, y).includes("road.")) {
+                    setTileAuto(roadTileset, "road.", "bridge.", x - 1, y);
+                }
+                if (getTile(x, y + 1).includes("road.")) {
+                    setTileAuto(roadTileset, "road.", "bridge.", x, y + 1);
+                }
+                if (getTile(x, y - 1).includes("road.")) {
+                    setTileAuto(roadTileset, "road.", "bridge.", x, y - 1);
+                }
+            }
+        }
+
+        changeSquare = (id: number, terrain_name: string, t: string): void => {
+            curndx = id;
+
+            //remove highlight from previous image
+            theNode = document.getElementById(oldterrain) as HTMLImageElement;
+            theNode.style.border = 'solid 2px transparent';
+
+            //set variables
+            oldterrain = terrain_name;
+            type = t;
+
+            //remove highlight from all menus
+            theNode = terrainImage;
+            theNode.style.border = 'solid 2px transparent';
+            theNode = buildingImage;
+            theNode.style.border = 'solid 2px transparent';
+            theNode = unitImage;
+            theNode.style.border = 'solid 2px transparent';
+            theNode = deleteImage;
+            theNode.style.border = 'solid 2px transparent';
+
+            //highlight selected tile (in menu)
+            theNode = document.getElementById(terrain_name) as HTMLImageElement;
+            theNode.style.border = 'solid 2px rgba(9, 159, 226, 0.6)';
+
+            //change menu image & highlight
+            if (type == 'terrain') { theNode = terrainImage; }
+            if (type == 'building' || type == 'neutral') { theNode = buildingImage; }
+            if (type == 'unit') { theNode = unitImage; }
+            if (type == 'delete') { theNode = deleteImage; }
+
+            if (type !== 'delete') {
+                if (terrain_name.startsWith('auto')) { theNode.src = `https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/${terrain_name.split('.')[0]}.png?raw=true`; theNode.style.width = "16px"; }
+                else if (type == 'terrain') { theNode.src = 'https://awbw.amarriner.com/' + 'terrain/ani/' + terrain_name; }
+                else if (type == 'building') { theNode.src = 'https://awbw.amarriner.com/' + 'terrain/ani/' + country + terrain_name; }
+                else if (type == 'neutral') { theNode.src = 'https://awbw.amarriner.com/' + 'terrain/ani/' + terrain_name; }
+                else if (type == 'unit') { theNode.src = 'https://awbw.amarriner.com/' + 'terrain/ani/' + code + terrain_name; }
+            }
+            else {
+                closeMenu(terrainTable); closeMenu(countryTable); closeMenu(buildingTable); closeMenu(unitTable);
+            }
+            theNode.style.border = 'solid 2px rgba(9, 159, 226, 0.6)';
+
+            if (type == 'delete') {
+                gamemap.style.cursor = "url(https://awbw.amarriner.com/terrain/delete_cursor.gif), auto";
+            }
+            else {
+                gamemap.style.cursor = 'pointer';
+            }
+        }
+
+        showBaseTerrain = () => {
+            if (!terrainVisible) {
+                var elLeft = getOffset(currentTerrain).left, elTop = getOffset(currentTerrain).top;
+                var containerLeft = getOffset(gameContainer).left, containerTop = getOffset(gameContainer).top;
+
+                //show dropdown
+                applyCSS(terrainTable, {
+                    left: (elLeft - containerLeft - 10) + "px",
+                    top: (elTop - containerTop + 45) + "px",
+                    visibility: 'visible'
+                });
+
+                terrainVisible = 1;
+
+                //hide other dropdowns
+                if (countryVisible) { closeMenu(countryTable); }
+                if (buildingVisible) { closeMenu(buildingTable); }
+                if (unitVisible) { closeMenu(unitTable); }
+
+                //change square
+                terrain_name = terrainImage.src;
+                if (terrain_name.startsWith("https://github.com/TheGamerASD")) {
+                    terrain_name = terrain_name.replace('https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/', '');
+                    terrain_name = terrain_name.replace('?raw=true', '');
+                    terrain_name = terrain_name.replace('png', 'gif');
+                }
+                else {
+                    terrain_name = terrain_name.replace(`terrain/${theme}/`, '');
+                    terrain_name = terrain_name.replace('https://awbw.amarriner.com/', '');
+                }
+
+                for (var c = 1; c <= images.length; c++) {
+                    if (images[c] == terrain_name) { id = c; break; }
+                }
+
+                changeSquare(id, terrain_name, 'terrain');
+            }
+            else {
+                closeMenu(terrainTable);
+                terrainVisible = 0;
+            }
+        }
+
+        update = (square: string, hidden: string, x: number, y: number, thetop: number) => {
+            symndx = curndx;
+
+            oldupdate(square, hidden, x, y, thetop);
+
+            let tx: string = x.toString();
+            var ty: string = y.toString();
+            var fx = mapwidth - x;
+            var fy = mapheight - y;
+            let tfx: string = (mapwidth - x).toString();
+            let tfy: string = (mapheight - y).toString();
+            if (x < 10) { tx = '0' + x; }
+            if (y < 10) { ty = '0' + y; }
+            if (fx < 10) { tfx = '0' + (mapwidth - x); }
+            if (fy < 10) { tfy = '0' + (mapheight - y); }
+            let stype: number = parseInt((document.getElementById('set-symmetry') as HTMLSelectElement).value);
+            if (stype >= 6 || stype == 0 || curndx < 0) { symndx = curndx; }
+            else { symndx = symmetry[curndx][stype]; }
+
+            //2-quad rotation
+            if (stype == 4) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tfx + tfy, 'hidden' + tfx + tfy, fx, fy, fy * 16);
+                }
+            }
+
+            //4-quad rotation
+            if (stype == 6) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tfx + tfy, 'hidden' + tfx + tfy, fx, fy, fy * 16);
+                    oldupdate('square' + ty + tfx, 'hidden' + ty + tfx, y, fx, fx * 16);
+                    oldupdate('square' + tfy + tx, 'hidden' + tfy + tx, fy, x, x * 16);
+                }
+            }
+
+            //horizontal flip
+            if (stype == 3) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tfx + ty, 'hidden' + tfx + ty, fx, y, y * 16);
+                }
+            }
+
+            //vertical flip
+            if (stype == 5) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tx + tfy, 'hidden' + tx + tfy, x, fy, fy * 16);
+                }
+            }
+
+            //diagonal L->R flip
+            if (stype == 1) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + ty + tx, 'hidden' + ty + tx, y, x, x * 16);
+                }
+            }
+
+            //diagonal R->L flip
+            if (stype == 2) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tfy + tfx, 'hidden' + tfy + tfx, fy, fx, fx * 16);
+                }
+            }
+
+            //horizontal + vertical flip (4-quadrant)
+            if (stype == 7) {
+                if (type == 'terrain' || type == 'building' || type == 'neutral') {
+                    oldupdate('square' + tfx + tfy, 'hidden' + tfx + tfy, fx, fy, fy * 16);
+                    oldupdate('square' + tfx + ty, 'hidden' + tfx + ty, fx, y, y * 16);
+                    oldupdate('square' + tx + tfy, 'hidden' + tx + tfy, x, fy, fy * 16);
+                }
+            }
+        }
+    }
+
+    function linkFixScript() {
+        document.querySelectorAll("a").forEach(a => a.style.outline = "0");
+    }
+
+    ModuleManager.registerModule(setGlobals, Pages.All);
     ModuleManager.registerModule(autosaveScript, Pages.MapEditor);
     ModuleManager.registerModule(infoPanelScript, Pages.MapEditor);
     ModuleManager.registerModule(asyncSaveScript, Pages.MapEditor);
@@ -1985,6 +2343,8 @@ ${mapID}
     ModuleManager.registerModule(mapResizeScript, Pages.YourMaps);
     ModuleManager.registerModule(uploadMapScript, Pages.UploadMap);
     ModuleManager.registerModule(fixCacheScript, Pages.PreviewMap);
+    ModuleManager.registerModule(autoTileScript, Pages.MapEditor);
+    ModuleManager.registerModule(linkFixScript, Pages.MapEditor);
 
     ModuleManager.runModules();
 })();
