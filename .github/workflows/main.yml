@@ -13,14 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - uses: iCrawl/action-tsc@v1
+      
       - name: Install Type Definitions
         run: npm i --save-dev @types/jquery
         
       - name: Delete Old File
         run: del userscript.user.js
 
-      - name: Build Project
-        run: tsc -p tsconfig.json
+      - name: Compile Project
+        uses: iCrawl/action-tsc@v1
 
       - name: Rename Output File
         run: Rename-Item -Path "userscript.js" -NewName "userscript.user.js"
