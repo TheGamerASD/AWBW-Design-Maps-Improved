@@ -8,7 +8,7 @@ This is a Tampermonkey user script for improving the Advance Wars By Web mapmaki
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/autosave.png)
 
-Turn on autosave by using the checkbox. When turned on, autosave will save every 20 seconds or whenever you leave the map editor page.
+Turn on autosave by using the checkbox. When turned on, autosave will save every 10 seconds or whenever you leave the map editor page.
 ### Info Panel
 
 ![](https://github.com/TheGamerASD/AWBW-Design-Maps-Improved/blob/main/images/infopanel.png)
