@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.3
+// @version      1.3.1
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/*
@@ -1278,6 +1278,7 @@ ${overwriteID}
             }
             if (type == "unit" || type == "delete") {
                 square = "unit" + tx + ty;
+                hidden = "hidden" + tx + ty;
                 var unit = "units_id" + tx + ty;
                 var codeid = "code" + tx + ty;
                 theNode = document.getElementById(square);
@@ -1832,23 +1833,23 @@ Map Data:
 <option value="Expand">Expand</option>
 <option value="Shrink">Shrink</option></select></td>
 <td>left by</td><td>
-<input class="text input_left" min="0" max="10" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
+<input class="text input_left" min="0" max="20" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
 <td>tile(s)</td></tr>
 <tr><td>
 <select class="select_right">
 <option value="Expand">Expand</option>
 <option value="Shrink">Shrink</option></select></td>
 <td>right by</td><td>
-<input class="text input_right" min="0" max="10" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
+<input class="text input_right" min="0" max="20" value="0" type="number" style=" padding-left: 3px; width: 50px;"></td>
 <td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class="select_top">
 <option value="Expand">Expand</option>
 <option value="Shrink">Shrink</option></select></td><td>top by</td><td>
-<input class="text input_top" min="0" max="10" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
+<input class="text input_top" min="0" max="20" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
 <td>tile(s)</td></tr>
 <tr><td><select class="select_bottom">
 <option value="Expand">Expand</option>
 <option value="Shrink">Shrink</option></select></td><td>bottom by</td><td>
-<input class="text input_bottom" min="0" max="10" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
+<input class="text input_bottom" min="0" max="20" value="0" type="number" style=" padding-left: 3px;width: 50px;"></td>
 <td>tile(s)</td></tr>
 <tr>
 <td style=""><input style="margin-top: 5px;width: 50px;" class="submit" type="button" value="Resize"></td></tr><tr>
@@ -1916,7 +1917,7 @@ Map Data:
                 let newHeight: number = mapHeight + getChange(top, topExpand) + getChange(bottom, bottomExpand);
                 let newWidth: number = mapWidth + getChange(left, leftExpand) + getChange(right, rightExpand);
 
-                if (newHeight > 36 || newHeight < 5 || newWidth > 36 || newWidth < 5) {
+                if (newHeight > 50 || newHeight < 5 || newWidth > 50 || newWidth < 5) {
                     return "";
                 }
 
