@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.3
+// @version      1.3.1
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/*
@@ -502,6 +502,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             }
             if (type == "unit" || type == "delete") {
                 square = "unit" + tx + ty;
+                hidden = "hidden" + tx + ty;
                 var unit = "units_id" + tx + ty;
                 var codeid = "code" + tx + ty;
                 theNode = document.getElementById(square);
@@ -982,7 +983,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var resizePrompt = document.createElement("div");
             resizePrompt.setAttribute("style", "position: fixed; left: 50vw; top: 50vh; margin-top: -7%; margin-left: -8%; z-index: 1;");
             resizePrompt.setAttribute("id", "resize_prompt");
-            resizePrompt.innerHTML = "<table cellspacing=\"0\" cellpadding=\"0\"><tbody><tr>\n<td class=\"bordertitle\" height=\"20\"><b>Resize Map</b></td></tr><tr>\n<td class=\"borderwhite\" style=\"padding-top: 3px;\">\n<form name=\"\" style=\"padding-left: 2px; padding-right: 2px; margin-bottom: 5px;\">\n<table cellspacing=\"1\" cellpadding=\"2\"><tbody><tr><td><b>X Axis:</b></td></tr><tr><td>\n<select class=\"select_left\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>left by</td><td>\n<input class=\"text input_left\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td>\n<select class=\"select_right\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>right by</td><td>\n<input class=\"text input_right\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class=\"select_top\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>top by</td><td>\n<input class=\"text input_top\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td><select class=\"select_bottom\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>bottom by</td><td>\n<input class=\"text input_bottom\" min=\"0\" max=\"10\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Resize\"></td></tr><tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Cancel\"></td></tr>\n</tbody></tbody></table></form></td></tr></tbody></table>";
+            resizePrompt.innerHTML = "<table cellspacing=\"0\" cellpadding=\"0\"><tbody><tr>\n<td class=\"bordertitle\" height=\"20\"><b>Resize Map</b></td></tr><tr>\n<td class=\"borderwhite\" style=\"padding-top: 3px;\">\n<form name=\"\" style=\"padding-left: 2px; padding-right: 2px; margin-bottom: 5px;\">\n<table cellspacing=\"1\" cellpadding=\"2\"><tbody><tr><td><b>X Axis:</b></td></tr><tr><td>\n<select class=\"select_left\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>left by</td><td>\n<input class=\"text input_left\" min=\"0\" max=\"20\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td>\n<select class=\"select_right\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td>\n<td>right by</td><td>\n<input class=\"text input_right\" min=\"0\" max=\"20\" value=\"0\" type=\"number\" style=\" padding-left: 3px; width: 50px;\"></td>\n<td>tile(s)</td></tr><tr><td><b>Y Axis:</b></td></tr><tr><td><select  class=\"select_top\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>top by</td><td>\n<input class=\"text input_top\" min=\"0\" max=\"20\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr><td><select class=\"select_bottom\">\n<option value=\"Expand\">Expand</option>\n<option value=\"Shrink\">Shrink</option></select></td><td>bottom by</td><td>\n<input class=\"text input_bottom\" min=\"0\" max=\"20\" value=\"0\" type=\"number\" style=\" padding-left: 3px;width: 50px;\"></td>\n<td>tile(s)</td></tr>\n<tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Resize\"></td></tr><tr>\n<td style=\"\"><input style=\"margin-top: 5px;width: 50px;\" class=\"submit\" type=\"button\" value=\"Cancel\"></td></tr>\n</tbody></tbody></table></form></td></tr></tbody></table>";
             document.getElementById("main").appendChild(resizePrompt);
             resizePrompt.getElementsByClassName("submit")[0].onclick = function () { return onResize(mapID, mapNames); };
             resizePrompt.getElementsByClassName("submit")[1].onclick = onResizeCancel;
@@ -1033,7 +1034,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 }
                 var newHeight = mapHeight + getChange(top, topExpand) + getChange(bottom, bottomExpand);
                 var newWidth = mapWidth + getChange(left, leftExpand) + getChange(right, rightExpand);
-                if (newHeight > 36 || newHeight < 5 || newWidth > 36 || newWidth < 5) {
+                if (newHeight > 50 || newHeight < 5 || newWidth > 50 || newWidth < 5) {
                     return "";
                 }
                 var index = 0;
