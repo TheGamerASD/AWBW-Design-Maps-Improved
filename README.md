@@ -1,4 +1,4 @@
-# AWBW Design Maps Improved v1.3.1
+# AWBW Design Maps Improved v1.3.2
 This is a Tampermonkey user script for improving the Advance Wars By Web mapmaking experience.
 ## How to install:
 1. Install the Tampermonkey browser extension from [here](https://www.tampermonkey.net/).

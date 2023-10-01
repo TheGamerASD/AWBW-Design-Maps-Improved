@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AWBW Design Maps Improved
-// @version      1.3.1
+// @version      1.3.2
 // @description  Improves the AWBW mapmaking experience.
 // @author       TheGamerASD
 // @match        https://awbw.amarriner.com/*
@@ -17,8 +17,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -106,34 +106,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             window.terrain_name = "";
             window.id = 0;
         }
-        GlobalFunctions.uploadMap = function (mapName, mapData) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch("/uploadmap.php", {
+        GlobalFunctions.uploadMap = function (mapName, mapData) {
+            return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, fetch("/uploadmap.php", {
                             method: "POST",
                             body: "-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"action\"\n\nUPLOAD\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"mapfile\"; filename=\"data.txt\"\nContent-Type: text/plain\n\n".concat(mapData, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"name\"\n\n").concat(mapName, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"format\"\n\nAWBW\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"overwrite\"\n\nnew\n-----------------------------216783749517670898471830319234--"),
                             headers: {
                                 "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
                             }
                         })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
             });
-        }); };
-        GlobalFunctions.overwriteMap = function (mapName, overwriteID, mapData) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch("/uploadmap.php", {
+        };
+        GlobalFunctions.overwriteMap = function (mapName, overwriteID, mapData) {
+            return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, fetch("/uploadmap.php", {
                             method: "POST",
                             body: "-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"action\"\n\nUPLOAD\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"mapfile\"; filename=\"data.txt\"\nContent-Type: text/plain\n\n".concat(mapData, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"name\"\n\n").concat(mapName, "\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"format\"\n\nAWBW\n-----------------------------216783749517670898471830319234\nContent-Disposition: form-data; name=\"overwrite\"\n\n").concat(overwriteID, "\n-----------------------------216783749517670898471830319234--"),
                             headers: {
                                 "Content-Type": "multipart/form-data; boundary=---------------------------216783749517670898471830319234"
                             }
                         })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
             });
-        }); };
+        };
     }
     function autosaveScript() {
         'use strict';
@@ -807,15 +811,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         function addHotkey(key, downFunc, upFunc) {
             hotkeys.push(new Hotkey(key, downFunc, upFunc));
         }
-        addHotkey("a", function () { if (!terrainVisible)
-            showBaseTerrain(); }, function () { if (terrainVisible)
-            showBaseTerrain(); });
-        addHotkey("s", function () { if (!buildingVisible)
-            showBuildings(); }, function () { if (buildingVisible)
-            showBuildings(); });
-        addHotkey("d", function () { if (!unitVisible)
-            showUnits(); }, function () { if (unitVisible)
-            showUnits(); });
+        addHotkey("a", function () {
+            if (!terrainVisible)
+                showBaseTerrain();
+        }, function () {
+            if (terrainVisible)
+                showBaseTerrain();
+        });
+        addHotkey("s", function () {
+            if (!buildingVisible)
+                showBuildings();
+        }, function () {
+            if (buildingVisible)
+                showBuildings();
+        });
+        addHotkey("d", function () {
+            if (!unitVisible)
+                showUnits();
+        }, function () {
+            if (unitVisible)
+                showUnits();
+        });
         addHotkey("f", function () { return changeSquare(-1, "delete-image", "delete"); }, Function.prototype);
         addHotkey("1", function () { return changeCountry("os", "orangestar"); }, Function.prototype);
         addHotkey("2", function () { return changeCountry("bm", "bluemoon"); }, Function.prototype);
@@ -1092,8 +1108,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 cache: false,
                 success: function (data) {
                     var doc = new DOMParser().parseFromString(data, "text/html");
-                    var mapData = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
-                    console.log(mapData);
+                    var mapData = doc.querySelector("section#main > table > tbody > tr:nth-child(2) tbody").textContent.replace(/\n\n/g, "\n").trim();
                     var resizedMapData = resizeMap(mapData);
                     if (resizedMapData === "") {
                         alert("Resize canceled. Resizing map would give it an invalid size.");
@@ -1107,8 +1122,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         }
                     }).then(function () {
                         window.location.href = "https://awbw.amarriner.com/design.php#map_".concat(mapID);
-                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src === "https://awbw.amarriner.com/smallmaps/".concat(mapID, ".png"); });
-                        mapPreview.src = mapPreview.src + "?" + Date.now();
+                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src.includes("/".concat(mapID, ".png")); });
+                        mapPreview.src = "".concat(mapPreview.src.split('?')[0], "?").concat(Date.now());
+                        ;
                     });
                 },
                 error: function () {
