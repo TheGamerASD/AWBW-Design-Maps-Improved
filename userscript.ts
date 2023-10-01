@@ -1984,8 +1984,7 @@ Map Data:
                 cache: false,
                 success: function (data: string) {
                     let doc: Document = new DOMParser().parseFromString(data, "text/html");
-                    let mapData: string = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
-                    console.log(mapData);
+                    let mapData: string = doc.querySelector("section#main > table > tbody > tr:nth-child(2) tbody").textContent.replace(/\n\n/g, "\n").trim();
                     let resizedMapData: string = resizeMap(mapData);
 
                     if (resizedMapData === "") {
@@ -2025,8 +2024,8 @@ ${mapID}
                             }
                         }).then(() => {
                             window.location.href = `https://awbw.amarriner.com/design.php#map_${mapID}`;
-                            let mapPreview: HTMLImageElement = Object.values(document.querySelectorAll("img")).find(i => i.src === `https://awbw.amarriner.com/smallmaps/${mapID}.png`) as HTMLImageElement;
-                            mapPreview.src = mapPreview.src + "?" + Date.now();
+                            let mapPreview: HTMLImageElement = Object.values(document.querySelectorAll("img")).find(i => i.src.includes(`/${mapID}.png`)) as HTMLImageElement;
+                            mapPreview.src = `${mapPreview.src.split('?')[0]}?${Date.now()}`;;
                         });
                 },
                 error: function () {

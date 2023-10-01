@@ -1092,8 +1092,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 cache: false,
                 success: function (data) {
                     var doc = new DOMParser().parseFromString(data, "text/html");
-                    var mapData = doc.getElementById("main").children[0].children[0].children[1].children[0].children[0].textContent.replace(/\n\n/g, "\n").trim();
-                    console.log(mapData);
+                    var mapData = doc.querySelector("section#main > table > tbody > tr:nth-child(2) tbody").textContent.replace(/\n\n/g, "\n").trim();
                     var resizedMapData = resizeMap(mapData);
                     if (resizedMapData === "") {
                         alert("Resize canceled. Resizing map would give it an invalid size.");
@@ -1107,8 +1106,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         }
                     }).then(function () {
                         window.location.href = "https://awbw.amarriner.com/design.php#map_".concat(mapID);
-                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src === "https://awbw.amarriner.com/smallmaps/".concat(mapID, ".png"); });
-                        mapPreview.src = mapPreview.src + "?" + Date.now();
+                        var mapPreview = Object.values(document.querySelectorAll("img")).find(function (i) { return i.src.includes("/".concat(mapID, ".png")); });
+                        mapPreview.src = "".concat(mapPreview.src.split('?')[0], "?").concat(Date.now());
+                        ;
                     });
                 },
                 error: function () {
